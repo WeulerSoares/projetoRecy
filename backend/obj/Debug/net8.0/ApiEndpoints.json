@@ -1,0 +1,28 @@
+[
+  {
+    "ContainingType": "TesteApi.Controllers.EmployeeController",
+    "Method": "Add",
+    "RelativePath": "api/v1/employee",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "employeeViewModel",
+        "Type": "TesteApi.ViewModel.EmployeeViewModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TesteApi.Controllers.EmployeeController",
+    "Method": "Get",
+    "RelativePath": "api/v1/employee",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]
