@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/backend/.vs/TesteApi/FileContentIndex
+/backend/.vs/TesteApi/v17/.suo
+/backend/obj/Debug/net8.0/refint/TesteApi.dll
