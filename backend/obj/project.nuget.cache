@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "SI9aZs5gcH0=",
+  "dgSpecHash": "6/cTSgtB8O8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\weule\\source\\repos\\TesteApi\\TesteApi.csproj",
+  "projectFilePath": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\TesteApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\weule\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.10\\microsoft.entityframeworkcore.8.0.10.nupkg.sha512",
     "C:\\Users\\weule\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.10\\microsoft.entityframeworkcore.abstractions.8.0.10.nupkg.sha512",

@@ -1141,11 +1141,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\weule\\source\\repos\\TesteApi\\TesteApi.csproj",
+      "projectUniqueName": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\TesteApi.csproj",
       "projectName": "TesteApi",
-      "projectPath": "C:\\Users\\weule\\source\\repos\\TesteApi\\TesteApi.csproj",
+      "projectPath": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\TesteApi.csproj",
       "packagesPath": "C:\\Users\\weule\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\weule\\source\\repos\\TesteApi\\obj\\",
+      "outputPath": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\weule\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -28,7 +28,16 @@ export default function TabLayout() {
         options={{
           title: 'Explore',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+            <TabBarIcon name={focused ? 'ticket' : 'ticket-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="CadastroCupom"
+        options={{
+          title: 'Cadastro de Cupom',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'ticket' : 'ticket-outline'} color={color} />
           ),
         }}
       />
