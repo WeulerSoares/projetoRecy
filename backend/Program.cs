@@ -12,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -26,7 +27,7 @@ builder.Services.AddCors(options =>
 // Adicionando o DbContext com MySQL
 builder.Services.AddDbContext<ConnectionContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-        new MySqlServerVersion(new Version(8, 0, 33))));
+        new MySqlServerVersion(new Version(8, 0, 33))), ServiceLifetime.Scoped);
 
 var app = builder.Build();
 
