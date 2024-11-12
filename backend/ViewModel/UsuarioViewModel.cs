@@ -12,7 +12,7 @@
 
         public int? PontosAcumulados { get; set; }
 
-        public int TipoUsuario { get; set; }
+        public string TipoUsuario { get; set; }
 
         public string Cpf { get; set; }
 

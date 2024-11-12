@@ -6,6 +6,7 @@ import validator from 'validator';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { UsuarioService } from './services/usuarioService';
 import { Usuario } from './services/models/usuario';
+import { FirebaseError } from 'firebase/app';
 
 interface CustomRadioButtonProps {
   label: string;
@@ -126,24 +127,25 @@ export default function App() {
       alert("Por favor, preencha um CNPJ válido.");
       return;
     }
-
+    
     const auth = getAuth();
-    const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
-    const user = userCredential.user;
-
-    // Dados a serem enviados para o backend
-    const usuario = {
-      nome: nome,
-      cpf: cpfInput,
-      cnpj: cnpjInput,
-      firebaseUid: user.uid,
-      email: user.email,
-      tipoUsuario: tipoUsuario,
-      pontosAcumulados: 0,
-      dataNascimento: undefined,
-    } as Usuario;
 
     try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+      const user = userCredential.user;
+
+      // Dados a serem enviados para o backend
+      const usuario = {
+        firebaseUid: user.uid,
+        nome: nome,
+        email: user.email,
+        dataNascimento: undefined,
+        pontosAcumulados: 0,
+        tipoUsuario: tipoUsuario,
+        cpf: cpfInput,
+        cnpj: cnpjInput,
+      } as Usuario;
+
       // Fazendo a requisição POST para o backend
       const response = await UsuarioService.criarUsuario(usuario);
 
@@ -154,8 +156,26 @@ export default function App() {
         console.error('Erro ao cadastrar usuário', response);
       }
     } catch (error) {
-      console.error("Erro ao cadastrar o usuário:", error);
-      alert("Erro de conexão. Tente novamente mais tarde.");
+      if (error instanceof FirebaseError) {
+        // Verifica o código de erro específico do Firebase
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            alert("O e-mail já está em uso.");
+            break;
+          case 'auth/invalid-email':
+            alert("E-mail inválido.");
+            break;
+          case 'auth/weak-password':
+            alert("A senha é muito fraca.");
+            break;
+          default:
+            alert("Erro de autenticação. Tente novamente.");
+            console.error("Erro ao cadastrar o usuário:", error.message);
+        }
+      } else {
+        console.error("Erro ao cadastrar o usuário:", error);
+        alert("Erro de conexão. Tente novamente mais tarde.");
+      }
     }
   };
 

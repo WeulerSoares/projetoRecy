@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 using TesteApi.Infraestrutura;
 using TesteApi.Models;
 using TesteApi.ViewModel;
@@ -38,11 +39,11 @@ namespace TesteApi.Controllers
                     usuarioViewModel.FirebaseUid,
                     usuarioViewModel.Nome,
                     usuarioViewModel.Email,
-                    null,
+                    usuarioViewModel.DataNascimento,
                     0,
-                    usuarioViewModel.TipoUsuario,
-                    usuarioViewModel.Cpf,
-                    usuarioViewModel.Cnpj);
+                    usuarioViewModel.TipoUsuario.Equals("Coletor") ? 1 : 2,
+                    Regex.Replace(usuarioViewModel.Cpf, "[^0-9]", ""),
+                    Regex.Replace(usuarioViewModel.Cnpj, "[^0-9]", ""));
 
                 if (await usuarioRepository.Exists(usuario))
                 {

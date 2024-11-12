@@ -24,11 +24,11 @@ namespace TesteApi.Models
             this.TipoUsuario = tipoUsuario;
             this.Cpf = cpf;
             this.Cnpj = cnpj;
+            this.DataRegistro = DateTime.Now;
         }
 
         [Key]
         [Column("id")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Column("firebase_uid")]
