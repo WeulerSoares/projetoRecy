@@ -32,3 +32,10 @@
 /backend/obj/Debug/net8.0/TesteApi.pdb
 /backend/obj/Debug/net8.0/TesteApi.sourcelink.json
 *.vsidx
+/backend/obj/Release/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+/backend/obj/Release/net8.0/AppReciclagem.AssemblyInfo.cs
+/backend/obj/Release/net8.0/AppReciclagem.AssemblyInfoInputs.cache
+/backend/obj/Release/net8.0/AppReciclagem.assets.cache
+/backend/obj/Release/net8.0/AppReciclagem.csproj.AssemblyReference.cache
+/backend/obj/Release/net8.0/AppReciclagem.GeneratedMSBuildEditorConfig.editorconfig
+/backend/obj/Release/net8.0/AppReciclagem.GlobalUsings.g.cs
