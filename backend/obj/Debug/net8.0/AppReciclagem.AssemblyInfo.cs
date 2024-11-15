@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AppReciclagem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+adc14f861145ca0f945ca1e23a6a7a5c5fb1b8f1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ebaa461ed3ed8f6165ab18c68432c99cd57d59c9")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppReciclagem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppReciclagem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
