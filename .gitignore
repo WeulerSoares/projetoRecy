@@ -31,3 +31,4 @@
 /backend/obj/Debug/net8.0/TesteApi.dll
 /backend/obj/Debug/net8.0/TesteApi.pdb
 /backend/obj/Debug/net8.0/TesteApi.sourcelink.json
+*.vsidx
