@@ -17,8 +17,12 @@ export default function RootLayout() {
     if (isMounted) {
       if (!user) {
         router.replace('/login');
+      } else if (user.tipoUsuario === 'Coletor') {
+        router.replace('/(tabs)/normal');
+      } else if (user.tipoUsuario === 'Ponto de Coleta') {
+        router.replace('/(tabs)/pontoColeta');
       } else {
-        router.replace('/(tabs)');
+        router.replace('/(tabs)/admin');
       }
     }
   }, [user, isMounted]);
@@ -29,7 +33,9 @@ export default function RootLayout() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="(tabs)/normal" options={{ headerShown: false}} />
+      <Stack.Screen name="(tabs)/pontoColeta" options={{ headerShown: false}} />
+      <Stack.Screen name="(tabs)/admin" />
       <Stack.Screen name="login" />
       <Stack.Screen name="cadastroUsuario" />
     </Stack>

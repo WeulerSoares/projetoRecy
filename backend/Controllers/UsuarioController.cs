@@ -20,9 +20,9 @@ namespace AppReciclagem.Controllers
         [HttpGet("{firebaseUid}")]
         public IActionResult Get(string firebaseUid)
         {
-            var usuarios = usuarioRepository.Get(firebaseUid);
+            var usuario = usuarioRepository.Get(firebaseUid);
 
-            return Ok(usuarios);
+            return Ok(usuario);
         }
 
         [HttpPost]
