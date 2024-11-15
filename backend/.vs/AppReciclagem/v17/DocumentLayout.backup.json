@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|c:\\users\\weule\\source\\repos\\projetorecy\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|c:\\users\\weule\\source\\repos\\projetorecy\\backend\\infraestrutura\\connectioncontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|solutionrelative:infraestrutura\\connectioncontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|c:\\users\\weule\\source\\repos\\projetorecy\\backend\\controllers\\usuariocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|solutionrelative:controllers\\usuariocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -19,16 +27,8 @@
       "RelativeMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|solutionrelative:viewmodel\\usuarioviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|c:\\users\\weule\\source\\repos\\projetorecy\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|c:\\users\\weule\\source\\repos\\projetorecy\\backend\\models\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|solutionrelative:models\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|c:\\users\\weule\\source\\repos\\projetorecy\\backend\\infraestrutura\\connectioncontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|solutionrelative:infraestrutura\\connectioncontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{11B49C79-0D49-44C1-8C3D-86014454DF9D}|AppReciclagem.csproj|c:\\users\\weule\\source\\repos\\projetorecy\\backend\\appreciclagem.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
@@ -42,24 +42,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAATAAAAAAAAAA==",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAmwAoAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-15T00:02:57.05Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "IUsuarioRepository.cs",
               "DocumentMoniker": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\Models\\IUsuarioRepository.cs",
               "RelativeDocumentMoniker": "Models\\IUsuarioRepository.cs",
@@ -72,7 +72,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "UsuarioViewModel.cs",
               "DocumentMoniker": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\ViewModel\\UsuarioViewModel.cs",
               "RelativeDocumentMoniker": "ViewModel\\UsuarioViewModel.cs",
@@ -85,7 +85,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "UsuarioController.cs",
               "DocumentMoniker": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\Controllers\\UsuarioController.cs",
               "RelativeDocumentMoniker": "Controllers\\UsuarioController.cs",
@@ -98,7 +98,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "UsuarioRepository.cs",
               "DocumentMoniker": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\Infraestrutura\\UsuarioRepository.cs",
               "RelativeDocumentMoniker": "Infraestrutura\\UsuarioRepository.cs",
@@ -111,13 +111,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 1,
               "Title": "ConnectionContext.cs",
               "DocumentMoniker": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\Infraestrutura\\ConnectionContext.cs",
               "RelativeDocumentMoniker": "Infraestrutura\\ConnectionContext.cs",
               "ToolTip": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\Infraestrutura\\ConnectionContext.cs",
               "RelativeToolTip": "Infraestrutura\\ConnectionContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAXAAAAAAAAAA==",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAUwAgAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-11T03:02:39.6Z",
               "EditorCaption": ""
@@ -137,7 +137,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Usuario.cs",
               "DocumentMoniker": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\Models\\Usuario.cs",
               "RelativeDocumentMoniker": "Models\\Usuario.cs",
