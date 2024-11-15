@@ -1,4 +1,4 @@
-﻿namespace TesteApi.ViewModel
+﻿namespace AppReciclagem.ViewModel
 {
     public class UsuarioViewModel
     {

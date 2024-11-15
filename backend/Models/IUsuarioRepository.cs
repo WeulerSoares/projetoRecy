@@ -1,8 +1,8 @@
-﻿namespace TesteApi.Models
+﻿namespace AppReciclagem.Models
 {
     public interface IUsuarioRepository
     {
-        List<Usuario> GetAll();
+        Usuario Get(string firebaseUid);
 
         void Add(Usuario usuario);
 

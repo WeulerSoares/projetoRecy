@@ -4,9 +4,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import validator from 'validator';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { UsuarioService } from './services/usuarioService';
-import { Usuario } from './services/models/usuario';
+import { UsuarioService } from './(tabs)/services/usuarioService';
+import { Usuario } from './(tabs)/services/models/usuario';
 import { FirebaseError } from 'firebase/app';
+import { useRouter } from 'expo-router';
 
 interface CustomRadioButtonProps {
   label: string;
@@ -51,6 +52,8 @@ export default function App() {
   const [cpfValido, setCpfValido] = useState(true);
   const [cnpjValido, setCnpjValido] = useState(true);
   const [emailError, setEmailError] = useState('');
+
+  const router = useRouter();
 
   // Função para validar CPF
   const validarCPF = (cpfInput: string) => {
@@ -128,6 +131,11 @@ export default function App() {
       return;
     }
     
+    if (emailError) {
+      alert("Por favor, preencha um e-mail válido.");
+      return;
+    }
+
     const auth = getAuth();
 
     try {
@@ -182,7 +190,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Image 
-      source={require("../../assets/images/lixo_dinheiro.png")} 
+      source={require("../assets/images/lixo_dinheiro.png")} 
       style={styles.logo} />
       
       <View style={styles.radioGroup}>
@@ -257,7 +265,7 @@ export default function App() {
 
       {!cpfValido && cpfInput.length !== 0 && <Text style={styles.errorText}>CPF inválido</Text>}
 
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, emailError.length > 0 && styles.invalidInput]}>
         <MaterialCommunityIcons name="email" size={24} style={styles.icon} />
         <TextInput
           placeholder="Digite seu e-mail"
@@ -290,7 +298,7 @@ export default function App() {
       </TouchableOpacity>
 
       <TouchableOpacity>
-        <Text style={styles.loginText}>
+        <Text style={styles.loginText} onPress={() => router.push('/login')}>
           Já possui uma conta? <Text style={{ fontWeight: 'bold' }}>Faça Login</Text>
         </Text>
       </TouchableOpacity>

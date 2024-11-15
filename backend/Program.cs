@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using TesteApi.Infraestrutura;
-using TesteApi.Models;
+using AppReciclagem.Infraestrutura;
+using AppReciclagem.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +11,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 
 builder.Services.AddCors(options =>

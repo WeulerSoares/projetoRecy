@@ -1141,9 +1141,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\TesteApi.csproj",
-      "projectName": "TesteApi",
-      "projectPath": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\TesteApi.csproj",
+      "projectUniqueName": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\AppReciclagem.csproj",
+      "projectName": "AppReciclagem",
+      "projectPath": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\AppReciclagem.csproj",
       "packagesPath": "C:\\Users\\weule\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\obj\\",
       "projectStyle": "PackageReference",

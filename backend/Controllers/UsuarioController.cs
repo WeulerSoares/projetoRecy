@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
-using TesteApi.Infraestrutura;
-using TesteApi.Models;
-using TesteApi.ViewModel;
+using AppReciclagem.Infraestrutura;
+using AppReciclagem.Models;
+using AppReciclagem.ViewModel;
 
-namespace TesteApi.Controllers
+namespace AppReciclagem.Controllers
 {
     [ApiController]
     [Route("api/v1/usuario")]
@@ -17,10 +17,10 @@ namespace TesteApi.Controllers
             this.usuarioRepository = usuarioRepository;
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("{firebaseUid}")]
+        public IActionResult Get(string firebaseUid)
         {
-            var usuarios = usuarioRepository.GetAll();
+            var usuarios = usuarioRepository.Get(firebaseUid);
 
             return Ok(usuarios);
         }

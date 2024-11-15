@@ -5,12 +5,16 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import React, { useEffect, useState } from 'react';
-import { Employee, EmployeeService } from './services/employeeService';
+//import { Employee, EmployeeService } from './services/employeeService';
 import { View, Text, FlatList } from 'react-native';
+import LogoutButton from '@/components/logoutButton';
+import { useUser } from '@/components/UserContext';
 
 export default function HomeScreen() {
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  //const [employees, setEmployees] = useState<Employee[]>([]);
+  const user = useUser();
 
+  /*
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -23,6 +27,21 @@ export default function HomeScreen() {
 
     fetchEmployees();
   }, []);
+
+  <View style={styles.stepContainer}>
+        <Text style={styles.stepContainer}>Lista de Employees</Text>
+        <FlatList
+          data={employees}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View>
+              <Text style={styles.stepContainer}>{item.name}</Text>
+              <Text style={styles.stepContainer}>Idade: {item.age}</Text>
+            </View>
+          )}
+        />
+      </View>
+*/
 
   return (
     <ParallaxScrollView
@@ -38,18 +57,21 @@ export default function HomeScreen() {
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-      <View style={styles.stepContainer}>
-      <Text style={styles.stepContainer}>Lista de Employees</Text>
-      <FlatList
-        data={employees}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View>
-            <Text style={styles.stepContainer}>{item.name}</Text>
-            <Text style={styles.stepContainer}>Idade: {item.age}</Text>
-          </View>
-        )}
-      />
+      <View style={styles.container}>
+      <Text style={styles.title}>Perfil do Usuário</Text>
+      {user ? (
+        <>
+          <Text>ID: {user.nome}</Text>
+          <Text>E-mail: {user.email}</Text>
+          {/* Exiba outras informações do usuário aqui */}
+        </>
+      ) : (
+        <Text>Usuário não logado</Text>
+      )}
+    </View>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Perfil do Usuário</Text>
+      <LogoutButton />
     </View>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
@@ -100,5 +122,17 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
 });

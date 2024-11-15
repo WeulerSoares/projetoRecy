@@ -1,4 +1,3 @@
-// Defina o tipo do produto com base no retorno da API
 export interface Usuario {
     firebaseUid: string;
     nome: string;

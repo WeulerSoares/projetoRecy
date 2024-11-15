@@ -1,0 +1,6 @@
+@AppReciclagem_HostAddress = http://localhost:5087
+
+GET {{AppReciclagem_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

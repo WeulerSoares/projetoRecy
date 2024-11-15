@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TesteApi.Models;
+using AppReciclagem.Models;
 
-namespace TesteApi.Infraestrutura
+namespace AppReciclagem.Infraestrutura
 {
     public class UsuarioRepository : IUsuarioRepository
     {
@@ -12,9 +12,9 @@ namespace TesteApi.Infraestrutura
             this.context = context;
         }
 
-        public List<Usuario> GetAll()
+        public Usuario Get(string firebaseUid)
         {
-            return context.Usuarios.ToList();
+            return context.Usuarios.First(f => f.FirebaseUid == firebaseUid);
         }
 
         public async Task<bool> Exists(Usuario usuario)

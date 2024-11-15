@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "6/cTSgtB8O8=",
+  "dgSpecHash": "W4Tt/SfPg+0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\TesteApi.csproj",
+  "projectFilePath": "C:\\Users\\weule\\source\\repos\\ProjetoRecy\\backend\\AppReciclagem.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\weule\\.nuget\\packages\\microsoft.entityframeworkcore\\8.0.10\\microsoft.entityframeworkcore.8.0.10.nupkg.sha512",
     "C:\\Users\\weule\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\8.0.10\\microsoft.entityframeworkcore.abstractions.8.0.10.nupkg.sha512",

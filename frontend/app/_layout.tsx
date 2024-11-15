@@ -1,37 +1,37 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import React, { useEffect, useState } from 'react';
+import { Stack, useRouter } from 'expo-router';
+import { useUser } from '@/components/UserContext';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const user = useUser();
+  const router = useRouter();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    // Marca o componente como montado quando ele for montado pela primeira vez
+    setIsMounted(true);
+  }, []);
 
-  if (!loaded) {
-    return null;
+  useEffect(() => {
+    // Só tenta redirecionar quando o componente está montado e o estado de carregamento está pronto
+    if (isMounted) {
+      if (!user) {
+        router.replace('/login');
+      } else {
+        router.replace('/(tabs)');
+      }
+    }
+  }, [user, isMounted]);
+
+  if (!isMounted) {
+    return null; // Uma tela de carregamento opcional enquanto o estado é resolvido
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="cadastroUsuario" />
+    </Stack>
   );
 }

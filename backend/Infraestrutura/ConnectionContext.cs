@@ -1,14 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TesteApi.Models;
+using AppReciclagem.Models;
 
-namespace TesteApi.Infraestrutura
+namespace AppReciclagem.Infraestrutura
 {
     public class ConnectionContext : DbContext
     {
         public ConnectionContext(DbContextOptions<ConnectionContext> options) : base(options) { }
         
-        public DbSet<Employee> Employees { get; set; }
-
         public DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
