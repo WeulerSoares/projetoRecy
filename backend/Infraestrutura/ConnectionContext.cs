@@ -9,6 +9,8 @@ namespace AppReciclagem.Infraestrutura
         
         public DbSet<Usuario> Usuarios { get; set; }
 
+        public DbSet<EmpresaParceira> EmpresasParceira { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql(

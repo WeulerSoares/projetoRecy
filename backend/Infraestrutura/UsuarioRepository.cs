@@ -3,15 +3,9 @@ using AppReciclagem.Models;
 
 namespace AppReciclagem.Infraestrutura
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class UsuarioRepository(
+        ConnectionContext context) : IUsuarioRepository
     {
-        private readonly ConnectionContext context;
-
-        public UsuarioRepository(ConnectionContext context)
-        {
-            this.context = context;
-        }
-
         public Usuario Get(string firebaseUid)
         {
             return context.Usuarios.First(f => f.FirebaseUid == firebaseUid);

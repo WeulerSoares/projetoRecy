@@ -26,13 +26,20 @@ export default function TabLayoutAdmin() {
           }}
         />
         <Tabs.Screen
-          name="CadastroCupom"
+          name="cadastroCupom"
           options={{
-            title: 'Cadastro de Cupom',
-            headerShown: false,
             tabBarLabel: '',
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon name={focused ? 'ticket' : 'ticket-outline'} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="cadastroEmpresa"
+          options={{
+            tabBarLabel: '',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'business' : 'business-outline'} color={color} />
             ),
           }}
         />

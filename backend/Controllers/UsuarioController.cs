@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
-using AppReciclagem.Infraestrutura;
 using AppReciclagem.Models;
 using AppReciclagem.ViewModel;
 
@@ -8,15 +7,9 @@ namespace AppReciclagem.Controllers
 {
     [ApiController]
     [Route("api/v1/usuario")]
-    public class UsuarioController : ControllerBase
+    public class UsuarioController(
+        IUsuarioRepository usuarioRepository) : ControllerBase
     {
-        private readonly IUsuarioRepository usuarioRepository;
-
-        public UsuarioController(IUsuarioRepository usuarioRepository)
-        {
-            this.usuarioRepository = usuarioRepository;
-        }
-
         [HttpGet("{firebaseUid}")]
         public IActionResult Get(string firebaseUid)
         {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Usuario } from './models/usuario';
 
-const API_URL = 'https://localhost:7167/api/v1/usuario'; // Altere para o IP correto
+const API_URL = 'https://localhost:7167/api/v1/usuario';
 
 export class UsuarioService {
   static async getUsuario(firebaseUid: string): Promise<Usuario> {
