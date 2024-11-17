@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Alert } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import { getAuth, signOut } from 'firebase/auth';
 import { useRouter } from 'expo-router';
 
@@ -20,6 +20,24 @@ export default function LogoutButton() {
   };
 
   return (
-    <Button title="Logout" onPress={handleLogout} color="#FF3B30" />
+    <TouchableOpacity style={styles.button} onPress={handleLogout}>
+      <Text style={styles.buttonText}>SAIR</Text>
+    </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: '#558C40',
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 15,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});

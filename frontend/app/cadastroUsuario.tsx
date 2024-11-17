@@ -113,9 +113,7 @@ export default function App() {
     }
   }
 
-  // Função para cadastrar o usuário
   const cadastrarUsuario = async () => {
-    // Verifique se todos os campos estão preenchidos e válidos
     if (!nome || (tipoUsuario === 'Coletor' && !cpf) || (tipoUsuario === 'Ponto de Coleta' && !cnpj) || !email || !senha) {
       alert("Por favor, preencha todos os campos.");
       return;
@@ -142,7 +140,6 @@ export default function App() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
 
-      // Dados a serem enviados para o backend
       const usuario = {
         firebaseUid: user.uid,
         nome: nome,
@@ -154,10 +151,8 @@ export default function App() {
         cnpj: cnpjInput,
       } as Usuario;
 
-      // Fazendo a requisição POST para o backend
       const response = await UsuarioService.criarUsuario(usuario);
 
-      // Processa a resposta do backend
       if (response) {
         console.log('Usuário cadastrado com sucesso:', response);
       } else {
@@ -165,7 +160,6 @@ export default function App() {
       }
     } catch (error) {
       if (error instanceof FirebaseError) {
-        // Verifica o código de erro específico do Firebase
         switch (error.code) {
           case 'auth/email-already-in-use':
             alert("O e-mail já está em uso.");

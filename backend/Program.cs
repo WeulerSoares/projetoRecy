@@ -12,6 +12,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddTransient<IEmpresaParceiraRepository, EmpresaParceiraRepository>();
+builder.Services.AddTransient<ICupomRepository, CupomRepository>();
 builder.Services.AddTransient<IPontoColetaRepository, PontoColetaRepository>();
 
 builder.Services.AddCors(options =>

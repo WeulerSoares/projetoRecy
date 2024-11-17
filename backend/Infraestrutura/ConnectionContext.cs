@@ -10,6 +10,10 @@ namespace AppReciclagem.Infraestrutura
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<PontoColeta> PontoColeta { get; set; }
 
+        public DbSet<EmpresaParceira> EmpresasParceira { get; set; }
+
+        public DbSet<Cupom> Cupons { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql(

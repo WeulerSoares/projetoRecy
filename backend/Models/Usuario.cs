@@ -57,5 +57,8 @@ namespace AppReciclagem.Models
 
         [Column("cnpj")]
         public string Cnpj { get; set; }
+
+        [Column("foto_path")]
+        public string FotoPath { get; set; }
     }
 }
