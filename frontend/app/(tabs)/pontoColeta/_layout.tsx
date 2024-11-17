@@ -26,6 +26,26 @@ export default function TabLayoutPontoColeta() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            headerShown: false,
+            tabBarLabel: '', // Esconde o texto da aba
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
+            ),
+          }}
+        />
+        {/* <Tabs.Screen
+          name="mapTest"
+          options={{
+            headerShown: false,
+            tabBarLabel: '', // Esconde o texto da aba
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'map' : 'map-outline'} color={color} /> 
+            ),
+          }}
+        /> */}
       </Tabs>
     </UserProvider>
   );
