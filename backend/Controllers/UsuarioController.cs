@@ -13,7 +13,7 @@ namespace AppReciclagem.Controllers
         [HttpGet("{firebaseUid}")]
         public IActionResult Get(string firebaseUid)
         {
-            var usuario = usuarioRepository.Get(firebaseUid);
+            var usuario = usuarioRepository.ObterPeloFirebaseUid(firebaseUid);
 
             return Ok(usuario);
         }
@@ -50,6 +50,59 @@ namespace AppReciclagem.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Erro ao cadastrar usuário", details = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("foto")]
+        public async Task<IActionResult> AddFoto([FromForm] FotoUsuarioViewModel fotoUsuarioViewModel)
+        {
+            try
+            {
+                if (fotoUsuarioViewModel == null)
+                {
+                    return BadRequest("Dados do usuário não fornecidos.");
+                }
+
+                var fotoPath = Path.Combine("Storage\\Usuarios", $"{fotoUsuarioViewModel.IdUsuario}.png");
+
+                if (System.IO.File.Exists(fotoPath))
+                {
+                    System.IO.File.Delete(fotoPath);
+                }
+
+                using Stream fileStream = new FileStream(fotoPath, FileMode.Create);
+                fotoUsuarioViewModel.Foto.CopyTo(fileStream);
+
+                var usuario = usuarioRepository.ObterPeloIdUsuario(fotoUsuarioViewModel.IdUsuario);
+
+                usuario.FotoPath = fotoPath;
+
+                usuarioRepository.Update(usuario);
+
+                return Ok(new { message = "Foto usuário salva com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao salvar foto usuário", details = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("{id}/foto")]
+        public IActionResult GetFoto(int id)
+        {
+            var usuario = usuarioRepository.ObterPeloIdUsuario(id);
+            var fotoPath = usuario.FotoPath;
+
+            if (!string.IsNullOrWhiteSpace(fotoPath) && System.IO.File.Exists(fotoPath))
+            {
+                var fileStream = System.IO.File.OpenRead(fotoPath);
+                return File(fileStream, "image/png");
+            }
+            else
+            {
+                return NotFound("Foto não encontrada.");
             }
         }
     }

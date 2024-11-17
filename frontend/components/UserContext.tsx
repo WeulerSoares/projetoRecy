@@ -23,6 +23,7 @@ export function UserProvider({ children }: UserProviderProps) {
 
           // Configura o estado do usuário com os dados retornados do MySQL
           setUser({
+            id: response.id,
             firebaseUid: response.firebaseUid,
             nome: response.nome,
             email: response.email,
@@ -31,6 +32,7 @@ export function UserProvider({ children }: UserProviderProps) {
             tipoUsuario: response.tipoUsuario,
             cpf: response.cpf,
             cnpj: response.cnpj,
+            fotoPath: response.fotoPath
           });
         } catch (error) {
           console.error("Erro ao buscar informações do usuário:", error);

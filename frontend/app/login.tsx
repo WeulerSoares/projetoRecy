@@ -40,7 +40,7 @@ export default function App() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       console.log('Usuário logado com sucesso:', userCredential.user);
-      router.replace('/(tabs)/normal');
+      router.replace('/(tabs)/admin');
     } catch (error) {
       if (error instanceof FirebaseError) {
         // Verifica o código de erro específico do Firebase

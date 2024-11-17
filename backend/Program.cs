@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddTransient<IEmpresaParceiraRepository, EmpresaParceiraRepository>();
+builder.Services.AddTransient<ICupomRepository, CupomRepository>();
 
 builder.Services.AddCors(options =>
 {

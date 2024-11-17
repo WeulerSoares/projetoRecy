@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Storage\EmpresasParceira\" />
+    <Folder Include="Storage\Usuarios\" />
   </ItemGroup>
 
 </Project>

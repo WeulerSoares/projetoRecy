@@ -11,6 +11,8 @@ namespace AppReciclagem.Infraestrutura
 
         public DbSet<EmpresaParceira> EmpresasParceira { get; set; }
 
+        public DbSet<Cupom> Cupons { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseMySql(

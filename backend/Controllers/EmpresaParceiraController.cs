@@ -58,11 +58,11 @@ namespace AppReciclagem.Controllers
 
                 empresaParceiraRepository.Add(empresaParceira);
 
-                return Ok(new { message = "Usuário cadastrado com sucesso!" });
+                return Ok(new { message = "Empresa parceira cadastrada com sucesso!" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Erro ao cadastrar usuário", details = ex.Message });
+                return StatusCode(500, new { message = "Erro ao cadastrar empresa parceira", details = ex.Message });
             }
         }
     }

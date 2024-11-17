@@ -1,58 +1,136 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
+import { EmpresaParceiraService } from '../services/empresaParceiraService';
+import { EmpresaParceira } from '../services/models/empresaParceira';
+import { Picker } from '@react-native-picker/picker';
+import { Cupom } from '../services/models/cupom';
+import { CupomService } from '../services/cupomService';
 
 export default function CadastroCupom() {
-  const [quantity, setQuantity] = useState(0);
-  const [value, setValue] = useState(10);
+  const [empresas, setEmpresas] = useState<EmpresaParceira[]>([]);
+  const [empresaSelecionada, setEmpresaSelecionada] = useState<string | undefined>();
+  const [pontos, setPontos] = useState('');
+  const [valor, setValor] = useState('');
+  const [quantidade, setQuantidade] = useState(0);
+  
+  const formatarPontos = (pontos: string) => {
+    return pontos.replace(/\D/g, '');
+  };
+  
+  const formatarValor = (valor: string) => {
+    return valor.replace(/\D/g, '');
+  };
+
+  useEffect(() => {
+    // Buscar empresas ao carregar o componente
+    const carregarEmpresas = async () => {
+      try {
+        const dados = await EmpresaParceiraService.obterEmpresas();
+        setEmpresas(dados);
+      } catch (error) {
+        console.error("Erro ao carregar empresas:", error);
+      }
+    };
+    
+    carregarEmpresas();
+  }, []);
+
+  const cadastrarCupom = async () => {
+    if (!empresaSelecionada || !pontos || !valor || !quantidade) {
+      alert("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    try {
+      const cupom = {
+        idEmpresa: Number(empresaSelecionada),
+        valor: Number(valor),
+        quantidade: quantidade,
+        pontos: Number(pontos)
+      } as Cupom;
+
+      const response = await CupomService.criarCupom(cupom);
+
+      if (response) {
+        console.log('Usuário cadastrado com sucesso:', response);
+      } else {
+        console.error('Erro ao cadastrar usuário', response);
+      }
+    } catch (error) {
+      console.error("Erro ao cadastrar o usuário:", error);
+      alert("Erro de conexão. Tente novamente mais tarde.");
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Cadastro Cupons</Text>
-
-      <View style={styles.logoContainer}>
-        <FontAwesome name="camera" size={48} color="white" />
-        <Text style={styles.logoText}>LOGO EMPRESA</Text>
+      
+      <View style={styles.inputContainer}>
+      <MaterialCommunityIcons name="domain" size={24} style={styles.icon} />
+        <Picker
+          style={styles.input}
+          selectedValue={empresaSelecionada}
+          onValueChange={(itemValue) => setEmpresaSelecionada(itemValue)}
+        >
+          <Picker.Item label="Selecione uma empresa" value="" />
+          {empresas.map((empresa) => (
+              <Picker.Item key={empresa.idEmpresa} label={empresa.nome} value={empresa.idEmpresa} />
+          ))}
+        </Picker>
+      </View>
+        
+      <View style={styles.inputContainer}>
+        <MaterialCommunityIcons name="alpha-p-box-outline" size={24} style={styles.icon} />
+        <TextInput
+          placeholder="Informe os pontos"
+          value={pontos}
+          onChangeText={(text) => {
+            const textoFormatado = formatarPontos(text);
+            setPontos(textoFormatado);  
+          }}
+          keyboardType="numeric"
+          style={styles.input}
+        />
       </View>
 
       <View style={styles.inputContainer}>
-        <FontAwesome name="building-o" size={20} color="white" style={styles.icon} />
-        <TextInput placeholder="Informe o nome da empresa" placeholderTextColor="#558C40" style={styles.input} />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <MaterialIcons name="business" size={20} color="white" style={styles.icon} />
-        <TextInput placeholder="Informe o CNPJ da empresa" placeholderTextColor="#558C40" style={styles.input} />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <FontAwesome name="key" size={20} color="white" style={styles.icon} />
-        <TextInput placeholder="Informe os pontos" placeholderTextColor="#558C40" style={styles.input} />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <FontAwesome name="money" size={20} color="white" style={styles.icon} />
-        <TextInput placeholder="Informe o valor total" placeholderTextColor="#558C40" style={styles.input} />
+        <FontAwesome 
+          name="money" 
+          size={20} 
+          color="black" 
+          style={styles.icon} />
+        <TextInput
+          placeholder="Informe o valor total"
+          value={valor}
+          onChangeText={(text) => {
+            const textoFormatado = formatarValor(text)
+            setValor(textoFormatado);
+          }}
+          keyboardType="numeric"
+          style={styles.input}
+        />
       </View>
 
       <Text style={styles.sliderLabel}>Quantidade x Valor</Text>
       <Slider
-        style={styles.slider}
-        minimumValue={0}
-        maximumValue={100}
-        step={1}
-        value={quantity}
-        onValueChange={(val) => setQuantity(val)}
-        minimumTrackTintColor="#FFFFFF"
-        maximumTrackTintColor="#888"
-        thumbTintColor="#6dc06d"
+          style={styles.slider}
+          minimumValue={1}
+          maximumValue={100}
+          step={1}
+          minimumTrackTintColor="#4CAF50" // Cor da barra ativa
+          maximumTrackTintColor="#d3d3d3" // Cor da barra inativa
+          thumbTintColor="#4CAF50" // Cor do "ponto" deslizante
+          value={quantidade}
+          onValueChange={(value) => setQuantidade(value)}
       />
 
-      <Text style={styles.sliderValue}>{quantity} cupons de {value} reais</Text>
+      <Text style={styles.sliderValue}>{quantidade} cupons de {(Number(valor) / quantidade) | 0} reais</Text>
 
-      <TouchableOpacity style={styles.registerButton}>
-        <Text style={styles.registerButtonText}>CADASTRAR</Text>
+      <TouchableOpacity style={styles.button} onPress={cadastrarCupom}>
+        <Text style={styles.buttonText}>CADASTRAR</Text>
       </TouchableOpacity>
     </View>
   );
@@ -61,10 +139,10 @@ export default function CadastroCupom() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#6dc06d',
-    paddingTop: 40,
+    backgroundColor: '#77CA56',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
   headerText: {
     fontSize: 22,
@@ -72,32 +150,42 @@ const styles = StyleSheet.create({
     color: 'white',
     marginBottom: 20,
   },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  logoText: {
+  imagePlaceholder: {
+    width: 100,
     color: 'white',
-    fontSize: 18,
-    marginTop: 8,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    fontSize: 18
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#88d888',
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginBottom: 15,
+    backgroundColor: '#97FF6E',
+    borderRadius: 30,
+    paddingHorizontal: 15,
+    marginVertical: 8,
     width: '100%',
+
+    // Sombra para iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+
+    // Sombra para Android
+    elevation: 5,
   },
   icon: {
     marginRight: 10,
   },
   input: {
     flex: 1,
-    color: 'white',
+    height: 50,
     fontSize: 16,
+    color: '#558C40',
+    backgroundColor: '#97FF6E',
+    fontWeight: 'bold'
   },
   sliderLabel: {
     color: 'white',
@@ -112,31 +200,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 20,
   },
-  registerButton: {
-    backgroundColor: '#3b8d3b',
-    borderRadius: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 40,
+  button: {
+    backgroundColor: '#558C40',
+    borderRadius: 30,
+    width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
+    paddingVertical: 15,
+    marginTop: 20,
   },
-  registerButtonText: {
-    color: 'white',
+  buttonText: {
+    color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-    backgroundColor: '#333',
-  },
-  activeIcon: {
-    color: '#6dc06d',
-  },
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: '#333',
+},
 });

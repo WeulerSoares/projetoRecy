@@ -29,3 +29,12 @@ CREATE TABLE IF NOT EXISTS empresas_parceira (
     
     CONSTRAINT UC_email UNIQUE (email)
 );
+
+CREATE TABLE cupons (
+	id_cupom INT AUTO_INCREMENT PRIMARY KEY,
+    id_empresa INT,
+    valor DECIMAL(10, 2),
+    quantidade INT,
+    pontos INT,
+    FOREIGN KEY (id_empresa) REFERENCES empresas_parceira(id_empresa)
+);
