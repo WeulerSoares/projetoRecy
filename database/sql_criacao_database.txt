@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     tipo_usuario INT DEFAULT 0 NOT NULL,
     cpf CHAR(11) UNIQUE,
     cnpj CHAR(14) UNIQUE,
+    foto_path VARCHAR(255),
     
     CONSTRAINT UC_email UNIQUE (email),
     INDEX idx_firebase_uid (firebase_uid),
