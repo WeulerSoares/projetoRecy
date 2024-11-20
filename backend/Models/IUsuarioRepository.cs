@@ -11,5 +11,7 @@
         Task<bool> Exists(Usuario usuario);
 
         void Update(Usuario usuario);
+
+        int ObterPontosAcumulados(int idUsuario);
     }
 }

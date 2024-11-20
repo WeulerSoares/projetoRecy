@@ -2,8 +2,10 @@
 {
     public interface ICupomRepository
     {
-        IEnumerable<Cupom> GetAllActive();
+        IEnumerable<CupomVisualizacao> GetAllActive();
 
         void Add(Cupom cupom);
+
+        string ResgatarCupom(int idCupom, int idUsuario);
     }
 }

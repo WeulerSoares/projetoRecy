@@ -5,6 +5,8 @@ import validator from 'validator';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 import { useRouter } from 'expo-router';
+import { UsuarioService } from './(tabs)/services/usuarioService';
+import { TipoUsuario } from './(tabs)/services/enums/tipoUsuario';
 
 export default function App() {
   const [email, setEmail] = useState('');
@@ -40,7 +42,17 @@ export default function App() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       console.log('Usuário logado com sucesso:', userCredential.user);
-      router.replace('/(tabs)/admin');
+
+      const response = await UsuarioService.getUsuario(userCredential.user.uid);
+      
+      if (response.tipoUsuario === TipoUsuario.Coletor) {
+        router.replace('/(tabs)/normal');
+      } else if (response.tipoUsuario === TipoUsuario.PontoColeta) {
+        router.replace('/(tabs)/pontoColeta');
+      } else {
+        router.replace('/(tabs)/admin');
+      }
+
     } catch (error) {
       if (error instanceof FirebaseError) {
         // Verifica o código de erro específico do Firebase

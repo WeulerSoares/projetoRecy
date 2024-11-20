@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     tipo_usuario INT DEFAULT 0 NOT NULL,
     cpf CHAR(11) UNIQUE,
     cnpj CHAR(14) UNIQUE,
+    foto_path VARCHAR(255),
     
     CONSTRAINT UC_email UNIQUE (email),
     INDEX idx_firebase_uid (firebase_uid),
@@ -31,10 +32,20 @@ CREATE TABLE IF NOT EXISTS empresas_parceira (
 );
 
 CREATE TABLE cupons (
-	id_cupom INT AUTO_INCREMENT PRIMARY KEY,
+    id_cupom INT AUTO_INCREMENT PRIMARY KEY,
     id_empresa INT,
     valor DECIMAL(10, 2),
     quantidade INT,
+    quantidade_estoque INT,
     pontos INT,
     FOREIGN KEY (id_empresa) REFERENCES empresas_parceira(id_empresa)
+);
+
+CREATE TABLE historico_resgate_cupons (
+    id_resgate INT AUTO_INCREMENT PRIMARY KEY,
+    id_cupom INT,
+    id_usuario INT,
+    data_resgate DATE,
+    FOREIGN KEY (id_cupom) REFERENCES cupons(id_cupom),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );

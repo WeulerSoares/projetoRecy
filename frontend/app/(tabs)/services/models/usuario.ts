@@ -4,8 +4,7 @@ export interface Usuario {
   nome: string;
   email: string;
   dataNascimento?: Date;
-  pontosAcumulados: number;
-  tipoUsuario: string;
+  tipoUsuario: number;
   cpf: string;
   cnpj: string;
   fotoPath: string;

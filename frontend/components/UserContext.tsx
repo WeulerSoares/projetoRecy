@@ -28,7 +28,6 @@ export function UserProvider({ children }: UserProviderProps) {
             nome: response.nome,
             email: response.email,
             dataNascimento: response.dataNascimento,
-            pontosAcumulados: response.pontosAcumulados,
             tipoUsuario: response.tipoUsuario,
             cpf: response.cpf,
             cnpj: response.cnpj,

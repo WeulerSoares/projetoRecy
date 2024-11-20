@@ -36,7 +36,9 @@ export default function CadastroCupom() {
         const uri = result.assets[0].uri;
         setSelectedImage(uri!);
 
-        await UsuarioService.adicionarFoto(user?.id!, uri!);
+        if (selectedImage) {
+          await UsuarioService.adicionarFoto(user?.id!, selectedImage);
+        }
       }
     } catch (error) {
       alert('Não foi possível selecionar a imagem.');
