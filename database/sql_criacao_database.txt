@@ -41,6 +41,18 @@ CREATE TABLE cupons (
     FOREIGN KEY (id_empresa) REFERENCES empresas_parceira(id_empresa)
 );
 
+CREATE TABLE IF NOT EXISTS pontos_coleta (
+	id_ponto_coleta INT AUTO_INCREMENT PRIMARY KEY,
+    cnpj CHAR(14) UNIQUE,
+    nome VARCHAR(255),
+    cep CHAR(8),
+    rua VARCHAR(255),
+    numero INT,
+    bairro VARCHAR(255),
+    cidade VARCHAR(255),
+    estado VARCHAR(255)
+);
+
 CREATE TABLE historico_resgate_cupons (
     id_resgate INT AUTO_INCREMENT PRIMARY KEY,
     id_cupom INT,
