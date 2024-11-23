@@ -9,12 +9,10 @@ export default function RootLayout() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Marca o componente como montado quando ele for montado pela primeira vez
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    // Só tenta redirecionar quando o componente está montado e o estado de carregamento está pronto
     if (isMounted) {
       if (!user) {
         router.replace('/login');
@@ -29,7 +27,7 @@ export default function RootLayout() {
   }, [user, isMounted]);
 
   if (!isMounted) {
-    return null; // Uma tela de carregamento opcional enquanto o estado é resolvido
+    return null;
   }
 
   return (

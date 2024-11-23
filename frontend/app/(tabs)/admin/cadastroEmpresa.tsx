@@ -173,7 +173,7 @@ export default function CadastroEmpresa() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#77CA56',
+    backgroundColor: '#6dc06d',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#97FF6E',
+    backgroundColor: '#8FFB8F',
     borderRadius: 30,
     paddingHorizontal: 15,
     marginVertical: 8,
@@ -226,12 +226,14 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
+    color: '#558C40'
   },
   input: {
     flex: 1,
     height: 50,
     fontSize: 16,
     color: '#558C40',
+    borderRadius: 30,
     fontWeight: 'bold'
   },
   invalidInput: {
@@ -239,7 +241,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   button: {
-    backgroundColor: '#558C40',
+    backgroundColor: '#559555',
     borderRadius: 30,
     width: '100%',
     alignItems: 'center',

@@ -1,7 +1,3 @@
-CREATE DATABASE IF NOT EXISTS app_reciclagem;
-
-USE app_reciclagem;
-
 CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     firebase_uid VARCHAR(128) NOT NULL,
@@ -31,7 +27,7 @@ CREATE TABLE IF NOT EXISTS empresas_parceira (
     CONSTRAINT UC_email UNIQUE (email)
 );
 
-CREATE TABLE cupons (
+CREATE TABLE IF NOT EXISTS cupons (
     id_cupom INT AUTO_INCREMENT PRIMARY KEY,
     id_empresa INT,
     valor DECIMAL(10, 2),
@@ -43,6 +39,7 @@ CREATE TABLE cupons (
 
 CREATE TABLE IF NOT EXISTS pontos_coleta (
 	id_ponto_coleta INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT UNIQUE,
     cnpj CHAR(14) UNIQUE,
     nome VARCHAR(255),
     cep CHAR(8),
@@ -50,14 +47,58 @@ CREATE TABLE IF NOT EXISTS pontos_coleta (
     numero INT,
     bairro VARCHAR(255),
     cidade VARCHAR(255),
-    estado VARCHAR(255)
+    estado VARCHAR(255),
+    foto_path VARCHAR(255),
+    
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
 
-CREATE TABLE historico_resgate_cupons (
+CREATE TABLE IF NOT EXISTS material_coleta (
+	id_material_coleta INT AUTO_INCREMENT PRIMARY KEY,
+    id_ponto_coleta INT,
+    tipo_material VARCHAR(255),
+    medida VARCHAR(255),
+    preco FLOAT,
+    
+    FOREIGN KEY (id_ponto_coleta) REFERENCES pontos_coleta(id_ponto_coleta)
+);
+CREATE TABLE IF NOT EXISTS registro_coleta (
+	id_registro_coleta INT AUTO_INCREMENT PRIMARY KEY,
+    id_ponto_coleta INT,
+    id_firebase_cliente VARCHAR(255),
+    id_material_coleta INT,
+    data_coleta DATE,
+    cpf_cliente char(11),
+    total FLOAT,
+    peso FLOAT,
+    
+    FOREIGN KEY (id_ponto_coleta) REFERENCES pontos_coleta(id_ponto_coleta),
+    FOREIGN KEY (id_firebase_cliente) REFERENCES usuarios(firebase_uid),
+    FOREIGN KEY (id_material_coleta) REFERENCES material_coleta(id_material_coleta)
+);
+
+CREATE TABLE IF NOT EXISTS historico_resgate_cupons (
     id_resgate INT AUTO_INCREMENT PRIMARY KEY,
     id_cupom INT,
     id_usuario INT,
     data_resgate DATE,
     FOREIGN KEY (id_cupom) REFERENCES cupons(id_cupom),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+
+CREATE TABLE IF NOT EXISTS pontos_coleta_favoritos (
+    id_ponto_coleta INT,
+    id_usuario INT,
+    PRIMARY KEY (id_ponto_coleta, id_usuario),
+    FOREIGN KEY (id_ponto_coleta) REFERENCES pontos_coleta(id_ponto_coleta),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+
+CREATE TABLE IF NOT EXISTS avaliacoes_pontos_coleta (
+    id_ponto_coleta INT,
+    id_usuario INT,
+    avaliacao DECIMAL(2, 1) NOT NULL CHECK (avaliacao >= 0.0 AND avaliacao <= 5.0),
+    PRIMARY KEY (id_ponto_coleta, id_usuario),
+    FOREIGN KEY (id_ponto_coleta) REFERENCES pontos_coleta(id_ponto_coleta),
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );

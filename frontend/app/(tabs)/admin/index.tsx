@@ -29,7 +29,7 @@ export default function CadastroCupom() {
     try {
       const result = await ImagePicker.launchImageLibrary({
         mediaType: 'photo',
-        quality: 1, // Qualidade da imagem
+        quality: 1,
       });
 
       if (result.assets && result.assets.length > 0) {
@@ -66,7 +66,7 @@ export default function CadastroCupom() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#77CA56',
+    backgroundColor: '#6dc06d',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row', 
     alignItems: 'center',
-    backgroundColor: '#558C40',
+    backgroundColor: '#559555',
     width: '100%',
     borderRadius: 10,
   },

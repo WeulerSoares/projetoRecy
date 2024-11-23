@@ -26,6 +26,7 @@ namespace AppReciclagem.Models
             this.Bairro = bairro;
             this.Cidade = cidade;
             this.Estado = estado;
+            this.FotoPath = string.Empty;
         }
 
         [Key]

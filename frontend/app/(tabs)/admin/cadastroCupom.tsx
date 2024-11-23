@@ -121,9 +121,9 @@ export default function CadastroCupom() {
           minimumValue={1}
           maximumValue={100}
           step={1}
-          minimumTrackTintColor="#4CAF50" // Cor da barra ativa
+          minimumTrackTintColor="#8FFB8F" // Cor da barra ativa
           maximumTrackTintColor="#d3d3d3" // Cor da barra inativa
-          thumbTintColor="#4CAF50" // Cor do "ponto" deslizante
+          thumbTintColor="#8FFB8F" // Cor do "ponto" deslizante
           value={quantidade}
           onValueChange={(value) => setQuantidade(value)}
       />
@@ -140,7 +140,7 @@ export default function CadastroCupom() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#77CA56',
+    backgroundColor: '#6dc06d',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#97FF6E',
+    backgroundColor: '#8FFB8F',
     borderRadius: 30,
     paddingHorizontal: 15,
     marginVertical: 8,
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     height: 50,
     fontSize: 16,
     color: '#558C40',
-    backgroundColor: '#97FF6E',
+    backgroundColor: '#8FFB8F',
     fontWeight: 'bold'
   },
   sliderLabel: {
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#558C40',
+    backgroundColor: '#559555',
     borderRadius: 30,
     width: '100%',
     alignItems: 'center',

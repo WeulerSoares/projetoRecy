@@ -3,13 +3,16 @@ using System.Text.RegularExpressions;
 using AppReciclagem.Models;
 using AppReciclagem.ViewModel;
 using AppReciclagem.Enums;
+using AppReciclagem.Infraestrutura;
 
 namespace AppReciclagem.Controllers
 {
     [ApiController]
     [Route("api/v1/usuario")]
     public class UsuarioController(
-        IUsuarioRepository usuarioRepository) : ControllerBase
+        IUsuarioRepository usuarioRepository,
+        IFavoritoPontoColetaRepository favoritoPontoColetaRepository,
+        IAvaliacaoPontoColetaRepository avaliacaoPontoColetaRepository) : ControllerBase
     {
         [HttpGet("{firebaseUid}")]
         public IActionResult Get(string firebaseUid)
@@ -132,8 +135,9 @@ namespace AppReciclagem.Controllers
             }
         }
 
-        [HttpGet("{idUsuario}/pontos")]
-        public IActionResult ObterPontos(int idUsuario)
+        [HttpGet]
+        [Route("{idUsuario}/pontos")]
+        public IActionResult ObterPontosAcumulados(int idUsuario)
         {
             try
             {
@@ -144,6 +148,84 @@ namespace AppReciclagem.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Erro ao buscar pontos acumulados usuário.", details = ex.Message });
+            }
+        }
+
+        [HttpPatch]
+        [Route("{idUsuario}/favoritos/{idPontoColeta}")]
+        public async Task<IActionResult> AlterarFavoritoPontoColeta(int idUsuario, int idPontoColeta)
+        {
+            try
+            {
+                if (idUsuario == 0 || idPontoColeta == 0)
+                {
+                    return BadRequest(new { message = "Dados não fornecidos." });
+                }
+
+                var favoritoPontoColeta = new FavoritoPontoColeta(idPontoColeta, idUsuario);
+
+                if (await favoritoPontoColetaRepository.Exists(favoritoPontoColeta))
+                {
+                    favoritoPontoColetaRepository.Delete(favoritoPontoColeta);
+                    return Ok(new { message = "Ponto de coleta removido dos favoritos com sucesso!" });
+                }
+                else
+                {
+                    favoritoPontoColetaRepository.Add(favoritoPontoColeta);
+                    return Ok(new { message = "Ponto de coleta salvo como favorito com sucesso!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao alterar favorito", details = ex.Message });
+            }
+        }
+
+        [HttpPatch]
+        [Route("avaliacao")]
+        public async Task<IActionResult> AlterarAvaliacaoPontoColeta(AvaliacaoPontoColetaViewModel avaliacao)
+        {
+            try
+            {
+                if (avaliacao.IdUsuario == 0 || avaliacao.IdPontoColeta == 0)
+                {
+                    return BadRequest(new { message = "Dados não fornecidos." });
+                }
+
+                var avaliacaoPontoColeta = new AvaliacaoPontoColeta(
+                    avaliacao.IdPontoColeta,
+                    avaliacao.IdUsuario,
+                    avaliacao.Avaliacao);
+
+                if (await avaliacaoPontoColetaRepository.Exists(avaliacaoPontoColeta))
+                {
+                    avaliacaoPontoColetaRepository.Update(avaliacaoPontoColeta);
+                    return Ok(new { message = "Avaliação do ponto de coleta atualizado com sucesso!" });
+                }
+                else
+                {
+                    avaliacaoPontoColetaRepository.Add(avaliacaoPontoColeta);
+                    return Ok(new { message = "Avaliação do ponto de coleta salvo com sucesso!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao alterar avaliaçãoo", details = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("{idUsuario}/favoritos/pontosColeta")]
+        public IActionResult GetAll(int idUsuario)
+        {
+            try
+            {
+                var pontosColetaFavoritos = favoritoPontoColetaRepository.ObterPontosColetaFavoritos(idUsuario);
+                return Ok(pontosColetaFavoritos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao obter dados dos pontos de coleta favoritos", details = ex.Message });
             }
         }
     }
