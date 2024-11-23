@@ -1,4 +1,6 @@
 export interface PontoColeta {
+    id: number;
+    idUsuario: number;
     nome: string;
     cnpj: string;
     cep: string;

@@ -17,6 +17,35 @@ namespace AppReciclagem.Controllers
             this.pontoColetaRepository = pontoColetaRepository;
         }
 
+        [HttpGet("{idUsuario}")]
+        public IActionResult Get(int idUsuario) 
+        {
+            try
+            {
+                var pontoColeta = pontoColetaRepository.Get(idUsuario);
+                return Ok(pontoColeta);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao obter dados do ponto de coleta", details = ex.Message });
+            }
+        }
+
+        [HttpGet("/all")]
+        public IActionResult GetAll()
+        {
+            try
+            {
+                var pontoColeta = pontoColetaRepository.GetAll();
+                return Ok(pontoColeta);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao cadastrar dados do ponto de coleta", details = ex.Message });
+            }
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Add(PontoColetaViewModel pontoColetaModel) 
         {
@@ -28,6 +57,7 @@ namespace AppReciclagem.Controllers
                 }
 
                 var pontoColeta = new PontoColeta(
+                    pontoColetaModel.IdUsuario,
                     pontoColetaModel.Nome,
                     Regex.Replace(pontoColetaModel.Cnpj, "[^0-9]", ""),
                     Regex.Replace(pontoColetaModel.Cep, "[^0-9]", ""),
@@ -44,6 +74,39 @@ namespace AppReciclagem.Controllers
             catch (Exception ex) 
             {
                 return StatusCode(500, new { message = "Erro ao cadastrar dados do ponto de coleta", details = ex.Message });
+            }
+        }
+
+        [HttpPut("{idPontoColeta}")]
+        public IActionResult Update(int idPontoColeta, PontoColeta pontoColeta) 
+        {
+            try
+            {
+                if (idPontoColeta == null || idPontoColeta != pontoColeta.Id) 
+                {
+                    return BadRequest("Dados inválidos ou ID não corresponde ao objeto fornecido."); ;
+                }
+
+                pontoColetaRepository.Update(pontoColeta);
+                return Ok("Ponto de coleta atualizado com sucesso!");
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao atualizar ponto de coleta", details = ex.Message });
+            }
+        }
+
+        [HttpDelete("{idPontoColeta}")]
+        public IActionResult Delete(int idPontoColeta) 
+        {
+            try
+            {
+                pontoColetaRepository.Delete(idPontoColeta);
+                return Ok("Ponto de coleta deletado com sucesso!");
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao deletar ponto de coleta", details = ex.Message });
             }
         }
 

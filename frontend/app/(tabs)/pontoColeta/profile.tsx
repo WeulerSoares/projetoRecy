@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { PontoColeta } from '../services/models/pontoColeta';
 import { useUser } from '@/components/UserContext';
-import { PontoColetaService } from '../services/pontoColeta';
+import { PontoColetaService } from '../services/pontoColetaService';
 import axios from 'axios';
-import { AxiosResponse } from 'axios';
+
 
 
 export default function UpdateAddressScreen() {
@@ -101,19 +101,33 @@ export default function UpdateAddressScreen() {
         baseURL: "https://viacep.com.br/ws/"
       });
 
-      const cepResponse: AxiosResponse<ViaCepResponse> = await apiViaCep.get(`${uf}/${data.address.city}/${data.address.road}/json/`);
+      const cepResponse = await apiViaCep.get<ViaCepResponse[]>(`${uf}/${data.address.city}/${data.address.road}/json/`);
 
       const cepData = cepResponse.data;
 
-      const realLocation = cepData.find((item: ViaCepResponse) => item.bairro === data.address.neighbourhood || item.bairro === data.address.village)
+      if (cepData.length > 1) {
+        const realLocation = cepData.find((item: ViaCepResponse) => item.bairro === data.address.neighbourhood || item.bairro === data.address.village || item.bairro === data.address.city_district)
 
-      console.log(realLocation)
+        if (realLocation) {
+          setCep(realLocation.cep)
+          setRua(realLocation.logradouro)
+          setBairro(realLocation.bairro)
+          setCidade(realLocation.localidade)
+          setEstado(realLocation.estado)
+        }
+      } else {
 
-      setCep(realLocation.cep)
-      setRua(realLocation.logradouro)
-      setBairro(realLocation.bairro)
-      setCidade(realLocation.localidade)
-      setEstado(realLocation.estado)
+        setCep(cepData[0].cep)
+        setRua(cepData[0].logradouro)
+        setBairro(cepData[0].bairro)
+        setCidade(cepData[0].localidade)
+        setEstado(cepData[0].estado)
+      }
+
+      console.log(cepData)
+
+
+
 
     } catch (error) {
       console.error('Erro ao buscar endereço:', error);
@@ -129,31 +143,32 @@ export default function UpdateAddressScreen() {
       !cidade ||
       !estado ||
       !numero) {
-        alert("Por favor, preencha todos os campos.");
-        return;
-      }
+      alert("Por favor, preencha todos os campos.");
+      return;
+    }
 
-      try {
-        const pontoColeta = {
-          nome: user?.nome,
-          cnpj: user?.cnpj,
-          cep: cep,
-          rua: rua,
-          bairro: bairro,
-          cidade: cidade,
-          estado: estado,
-          numero: parseInt(numero),
-        } as PontoColeta
-        const response = await PontoColetaService.createPontoColeta(pontoColeta);
+    try {
+      const pontoColeta = {
+        idUsuario: user?.id,
+        nome: user?.nome,
+        cnpj: user?.cnpj,
+        cep: cep,
+        rua: rua,
+        bairro: bairro,
+        cidade: cidade,
+        estado: estado,
+        numero: parseInt(numero),
+      } as PontoColeta
+      const response = await PontoColetaService.createPontoColeta(pontoColeta);
 
-        if (response) {
-          console.log('Endereço Ponto Coleta cadastrado com sucesso:', response);
-        } else {
-          console.error('Erro ao cadastrar usuário', response);
-        }
-      } catch (error) {
-        console.log(error);
+      if (response) {
+        console.log('Endereço Ponto Coleta cadastrado com sucesso:', response);
+      } else {
+        console.error('Erro ao cadastrar usuário', response);
       }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function checkCEP(cep: number) {

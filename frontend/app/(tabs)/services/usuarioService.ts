@@ -40,4 +40,14 @@ export class UsuarioService {
 
     return result.data;
   }
+
+  static async obterPeloCPF(cpf: string): Promise<Usuario> {
+    const response = await axios.get<Usuario>(`${API_URL}/${cpf}/cpf`);
+    return response.data;
+  }
+
+  static async atualizarUsuario(idUsuario: number, usuario: Usuario) {
+    const response = await axios.put(`${API_URL}/${idUsuario}`, usuario);
+    return response.data;
+  }
 }

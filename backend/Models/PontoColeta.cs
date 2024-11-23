@@ -7,6 +7,7 @@ namespace AppReciclagem.Models
     public class PontoColeta
     {
         public PontoColeta(
+            int idUsuario,
             string nome,
             string cnpj,
             string cep,
@@ -16,6 +17,7 @@ namespace AppReciclagem.Models
             string cidade,
             string estado) 
         { 
+            this.IdUsuario = idUsuario;
             this.Nome = nome;
             this.Cnpj = cnpj;
             this.Cep = cep;
@@ -32,6 +34,9 @@ namespace AppReciclagem.Models
 
         [Column("nome")] 
         public string Nome { get; set; }
+
+        [Column("id_usuario")]
+        public int IdUsuario { get; set; }
 
         [Column("cnpj")]
         public string Cnpj { get; set; }
@@ -53,5 +58,8 @@ namespace AppReciclagem.Models
 
         [Column("estado")]
         public string Estado { get; set; }
+
+        [Column("foto_path")]
+        public string? FotoPath { get; set; }
     }
 }

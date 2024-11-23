@@ -21,7 +21,8 @@ namespace AppReciclagem.Infraestrutura
             // Verificar se o email, CPF ou CNPJ já existem no banco de dados
             var usuarioExistente = await context.Usuarios
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Email == usuario.Email || u.Cpf == usuario.Cpf || u.Cnpj == usuario.Cnpj);
+                .FirstOrDefaultAsync(u => u.Email == usuario.Email || (u.Cpf != "" && u.Cpf == usuario.Cpf) || 
+                (u.Cnpj != "" && u.Cnpj == usuario.Cnpj));
 
             return usuarioExistente != null;
         }
@@ -36,6 +37,11 @@ namespace AppReciclagem.Infraestrutura
         {
             context.Usuarios.Update(usuario);
             context.SaveChanges();
+        }
+
+        public Usuario ObterPeloCPFUsuario(string cpf)
+        {
+            return context.Usuarios.First(f => f.Cpf == cpf);
         }
     }
 }

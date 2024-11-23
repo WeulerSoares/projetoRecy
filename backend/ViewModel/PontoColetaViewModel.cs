@@ -4,6 +4,8 @@
     {
         public string Nome { get; set; }
 
+        public int IdUsuario { get; set; }
+
         public string Cnpj { get; set; }
 
         public string Cep { get; set; }

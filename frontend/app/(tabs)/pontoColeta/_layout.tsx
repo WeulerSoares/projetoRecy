@@ -22,7 +22,7 @@ export default function TabLayoutPontoColeta() {
             headerShown: false,
             tabBarLabel: '', // Esconde o texto da aba
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+              <TabBarIcon name={focused ? 'trash' : 'trash-outline'} color={color} />
             ),
           }}
         />
@@ -33,6 +33,36 @@ export default function TabLayoutPontoColeta() {
             tabBarLabel: '', // Esconde o texto da aba
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
+            ),
+          }}
+        />
+        {/* <Tabs.Screen
+          name="collectionRegister"
+          options={{
+            headerShown: false,
+            tabBarLabel: '', // Esconde o texto da aba
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'trash' : 'trash-outline'} color={color} />
+            ),
+          }}
+        /> */}
+        <Tabs.Screen
+          name="collectionType"
+          options={{
+            headerShown: false,
+            tabBarLabel: '', // Esconde o texto da aba
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'albums' : 'albums-outline'} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="registers"
+          options={{
+            headerShown: false,
+            tabBarLabel: '', // Esconde o texto da aba
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name={focused ? 'list' : 'list-outline'} color={color} />
             ),
           }}
         />

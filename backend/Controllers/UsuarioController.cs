@@ -18,6 +18,14 @@ namespace AppReciclagem.Controllers
             return Ok(usuario);
         }
 
+        [HttpGet("{cpf}/cpf")]
+        public IActionResult GetByCPF(string cpf)
+        {
+            var usuario = usuarioRepository.ObterPeloCPFUsuario(cpf);
+
+            return Ok(usuario);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Add(UsuarioViewModel usuarioViewModel)
         {
@@ -103,6 +111,25 @@ namespace AppReciclagem.Controllers
             else
             {
                 return NotFound("Foto não encontrada.");
+            }
+        }
+
+        [HttpPut("{idUsuario}")]
+        public IActionResult Update(int idUsuario, [FromBody] Usuario usuario) 
+        {
+            if (idUsuario == null || idUsuario != usuario.Id) 
+            {
+                return BadRequest("Dados inválidos ou ID não corresponde ao objeto fornecido.");
+            }
+
+            try
+            {
+                usuarioRepository.Update(usuario);
+                return Ok("Usuário atualizado com sucesso!");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao atualizar usuário", details = ex.Message });
             }
         }
     }

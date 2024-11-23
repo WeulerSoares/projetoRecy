@@ -8,11 +8,16 @@ namespace AppReciclagem.Infraestrutura
         public ConnectionContext(DbContextOptions<ConnectionContext> options) : base(options) { }
         
         public DbSet<Usuario> Usuarios { get; set; }
+
         public DbSet<PontoColeta> PontoColeta { get; set; }
 
         public DbSet<EmpresaParceira> EmpresasParceira { get; set; }
 
         public DbSet<Cupom> Cupons { get; set; }
+
+        public DbSet<MaterialColeta> MaterialColeta { get; set; }
+
+        public DbSet<RegistroColeta> RegistroColeta { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

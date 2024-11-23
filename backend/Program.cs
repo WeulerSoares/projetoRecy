@@ -15,6 +15,8 @@ builder.Services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddTransient<IEmpresaParceiraRepository, EmpresaParceiraRepository>();
 builder.Services.AddTransient<ICupomRepository, CupomRepository>();
 builder.Services.AddTransient<IPontoColetaRepository, PontoColetaRepository>();
+builder.Services.AddTransient<IMaterialColetaRepository, MaterialColetaRepository>();
+builder.Services.AddTransient<IRegistroColetaRepository, RegistroColetaRepository>();
 
 builder.Services.AddCors(options =>
 {

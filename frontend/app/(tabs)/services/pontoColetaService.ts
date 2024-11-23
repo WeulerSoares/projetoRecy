@@ -8,4 +8,9 @@ export class PontoColetaService {
         const response = await axios.post<PontoColeta>(API_URL, pontoColeta);
         return response.data;
     }
+
+    static async getPontoColeta(idUsuario: number): Promise<PontoColeta> {
+        const response = await axios.get<PontoColeta>(`${API_URL}/${idUsuario}`);
+        return response.data;
+    }
 }

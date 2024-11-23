@@ -1,139 +1,324 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useEffect, useState } from 'react';
-//import React, { useEffect, useState } from 'react';
-//import { Employee, EmployeeService } from './services/employeeService';
-import { View, Text, FlatList } from 'react-native';
-import LogoutButton from '@/components/logoutButton';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { UsuarioService } from '../services/usuarioService';
+import { Usuario } from '../services/models/usuario';
+import { MaterialColetaService } from '../services/materialColetaService';
 import { useUser } from '@/components/UserContext';
+import { PontoColetaService } from '../services/pontoColetaService';
+import materialLabels from '../services/interfaces/materialLabels';
+import measureTypes from '../services/interfaces/measureType';
+import { MaterialItem } from '../services/interfaces/materialItem';
+import { RegistroColeta } from '../services/models/registroColeta';
+import { RegistroColetaService } from '../services/registroColetaService';
+import { cnpj } from 'cpf-cnpj-validator';
 
-export default function HomeScreen() {
-  //const [employees, setEmployees] = useState<Employee[]>([]);
-  const user = useUser();
+export default function RegistrarColeta() {
+    const [tipoMaterial, setTipoMaterial] = useState('');
+    const [measureType, setMeasureType] = useState('');
+    const [cpf, setCpf] = useState('');
+    const [usuario, setUsuario] = useState<Usuario>();
+    const [items, setItems] = useState<MaterialItem[]>([]);
+    const user = useUser();
+    const [quantidade, setQuantidade] = useState('');
+    const [total, setTotal] = useState('');
+    const [preco, setPreco] = useState('');
 
-  /*
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const data = await EmployeeService.getEmployees();
-        setEmployees(data);
-      } catch (error) {
-        console.error('Erro ao buscar Employees:', error);
-      }
+    const formatarCPF = (cpfInput: string) => {
+        return cpfInput
+            .replace(/\D/g, '') // Remove tudo que não é número
+            .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto
+            .replace(/(\d{3})(\d)/, '$1.$2') // Coloca ponto
+            .replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Coloca hífen
     };
 
-    fetchEmployees();
-  }, []);
+    const getUserByCPF = async () => {
+        try {
+            console.log(cpf);
+            const response = await UsuarioService.obterPeloCPF(cpf.replace(/\D/g, ''));
+            setUsuario(response);
+            obterItens();
+        }
+        catch (error) {
+            setUsuario(undefined);
+            console.log(error);
+        }
+    }
 
-  <View style={styles.stepContainer}>
-        <Text style={styles.stepContainer}>Lista de Employees</Text>
-        <FlatList
-          data={employees}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View>
-              <Text style={styles.stepContainer}>{item.name}</Text>
-              <Text style={styles.stepContainer}>Idade: {item.age}</Text>
+    const obterItens = async () => {
+        try {
+            if (user?.id) {
+                const pontoColeta = await PontoColetaService.getPontoColeta(user?.id)
+                const response = await MaterialColetaService.obterMateriais(pontoColeta.id);
+
+                const formattedData: MaterialItem[] = response.map((material: any) => ({
+                    id: material.id.toString(),
+                    tipo: material.tipoMaterial,
+                    medida: material.medida,
+                    preco: `R$ ${material.preco.toFixed(2)}`,
+                }));
+
+                setItems(formattedData);
+            }
+
+
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    function getTotal() {
+        const precoFormatted = parseFloat(preco.replace("R$", "").trim());
+        const valor = (parseFloat(quantidade) * precoFormatted).toFixed(2);
+        return valor;
+    }
+
+    const RegistrarColeta = async () => {
+        try {
+            if (user?.id) {
+                const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
+                console.log(total)
+                const cliente = await UsuarioService.obterPeloCPF(cpf.replace(/\D/g, ''));
+                const registroColeta = {
+                    idPontoColeta: pontoColeta.id,
+                    idFirebaseCliente: cliente.firebaseUid,
+                    idTipoMaterial: parseInt(tipoMaterial),
+                    CPFCliente: cliente.cpf,
+                    total: parseFloat(getTotal()),
+                    peso: parseFloat(quantidade),
+                    dataDaColeta: new Date()
+                } as RegistroColeta;
+
+                const response = await RegistroColetaService.criarRegistroColeta(registroColeta);
+
+                if (response) {
+                    AddPontos();
+                    alert("Registro realizado com sucsso!");
+                }
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    const AddPontos = async () => {
+        try 
+        {
+            const cliente = await UsuarioService.obterPeloCPF(cpf.replace(/\D/g, ''));
+            const usuario = {
+                id: cliente.id,
+                firebaseUid: cliente.firebaseUid,
+                nome: cliente.nome,
+                email: cliente.email,
+                dataNascimento: cliente.dataNascimento,
+                pontosAcumulados: (cliente.pontosAcumulados + 50),
+                tipoUsuario: cliente.tipoUsuario,
+                cpf: cliente.cpf,
+                cnpj: cliente.cnpj,
+                fotoPath: cliente.fotoPath
+            } as Usuario
+
+            if(usuario.id) {
+                console.log(usuario.id);
+                const response = await UsuarioService.atualizarUsuario(usuario.id,usuario)
+
+                if (response) {
+                    alert("+50 pontos, parabens!");
+                }
+            }
+
+            
+        }
+        catch (error) {
+
+        }
+    }
+
+    useEffect(() => {
+        obterItens();
+    }, []);
+
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>Registrar Coleta</Text>
+            <View style={styles.inputContainer}>
+                <FontAwesome5 name="id-card" size={18} color="#558C40" style={styles.icon} />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Digite o CPF do reciclador"
+                    placeholderTextColor="#558C40"
+                    value={cpf}
+                    onChangeText={(text) => {
+                        const textoFormatado = formatarCPF(text);
+                        setCpf(textoFormatado);
+                    }}
+                    onBlur={() => {
+                        let formatarCPF = cpf.replace(/\D/g, '')
+                        if (formatarCPF.length == 11)
+                            getUserByCPF();
+                    }}
+                />
             </View>
-          )}
-        />
-      </View>
-*/
 
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome! teste</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-      <View style={styles.container}>
-      <Text style={styles.title}>Perfil do Usuário</Text>
-      {user ? (
-        <>
-          <Text>ID: {user.nome}</Text>
-          <Text>E-mail: {user.email}</Text>
-          {/* Exiba outras informações do usuário aqui */}
-        </>
-      ) : (
-        <Text>Usuário não logado</Text>
-      )}
-    </View>
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Perfil do Usuário</Text>
-      <LogoutButton />
-    </View>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+            {
+                usuario &&
+                <Text style={styles.helperText}>{usuario.nome}</Text>
+
+            }
+
+            {
+                usuario && (
+                    <View style={styles.inputContainer}>
+                        <FontAwesome5 name="recycle" size={18} color="#558C40" style={styles.icon} />
+                        <View style={styles.pickerWrapper}>
+                            <Picker
+                                selectedValue={tipoMaterial}
+                                onValueChange={(itemValue) => {
+                                    setTipoMaterial(itemValue);
+                                    obterItens();
+
+                                    const selectedMaterial = items.find((item) => String(item.id) === String(itemValue));
+
+                                    setQuantidade('');
+
+                                    if (selectedMaterial) {
+                                        setMeasureType(selectedMaterial.medida);
+                                        setPreco(selectedMaterial.preco);
+                                    } else {
+                                        setMeasureType('');
+                                        setPreco('');
+                                    }
+                                }}
+                                style={styles.picker}
+                                dropdownIconColor="#558C40" // Ícone do dropdown
+                                placeholder="Selecione o tipo de material ▼"
+                            >
+                                {
+                                    !tipoMaterial &&
+                                    <Picker.Item label="Selecione o tipo de material ▼" value="" />
+                                }
+                                {items.map((item) => (
+                                    <Picker.Item
+                                        key={item.id}
+                                        label={`${materialLabels[item.tipo as keyof typeof materialLabels] || item.tipo} - ${item.preco}`}
+                                        value={item.id.toString()}
+                                    />
+                                ))}
+                            </Picker>
+                        </View>
+                    </View>)
+            }
+
+            {
+                tipoMaterial && (
+                    <TouchableOpacity style={styles.inputContainer}>
+                        <FontAwesome5 name="weight" size={18} color="#558C40" style={styles.icon} />
+                        <TextInput
+                            style={styles.input}
+                            placeholder={`${measureTypes[measureType as keyof typeof measureTypes] || 'Informe o valor'}`}
+                            placeholderTextColor="#558C40"
+                            keyboardType="numeric"
+                            value={quantidade.replace(/[^\d,.-]/g, '').replace(',', '.') || ''}
+                            onChangeText={(quantidade) => {
+                                setQuantidade(quantidade);
+                            }}
+                        />
+                    </TouchableOpacity>)
+            }
+
+
+            {
+                quantidade &&
+                <Text style={styles.helperText}>Valor total: R${getTotal()}</Text>
+            }
+
+            <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                    RegistrarColeta();
+                }}>
+                <Text style={styles.buttonText}>CADASTRAR</Text>
+            </TouchableOpacity>
+
+
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-    color: '#AAA'
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#6dc06d',
+        paddingHorizontal: 20,
+        paddingVertical: 40,
+        alignItems: 'center'
+    },
+    title: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        color: '#fff',
+        textAlign: 'center',
+        marginBottom: 30,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#8FE38F',
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        marginBottom: 20,
+        width: '100%'
+    },
+    icon: {
+        marginRight: 10,
+    },
+    input: {
+        flex: 1,
+        fontSize: 16,
+        color: '#fff',
+    },
+    inputText: {
+        flex: 1,
+        fontSize: 16,
+        color: '#fff',
+    },
+    helperText: {
+        fontSize: 14,
+        color: '#fff',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    button: {
+        backgroundColor: '#4E9A51',
+        paddingVertical: 14,
+        borderRadius: 25,
+        alignItems: 'center',
+        marginTop: 10,
+        width: "50%"
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    pickerWrapper: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: '#8FE38F',
+        borderRadius: 25, // Borda arredondada
+        overflow: 'hidden', // Para garantir que o conteúdo fique dentro da borda arredondada
+    },
+    picker: {
+        width: '100%',
+        color: '#558C40',
+        backgroundColor: '#8FE38F',
+        borderColor: '#8FE38F',
+        flex: 1,
+        fontSize: 16,
+    },
 });
