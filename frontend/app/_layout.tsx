@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Stack, useRouter } from 'expo-router';
 import { useUser } from '@/components/UserContext';
+import { TipoUsuario } from './(tabs)/services/enums/tipoUsuario';
 
 export default function RootLayout() {
   const user = useUser();
@@ -17,9 +18,9 @@ export default function RootLayout() {
     if (isMounted) {
       if (!user) {
         router.replace('/login');
-      } else if (user.tipoUsuario === 'Coletor') {
+      } else if (user.tipoUsuario === TipoUsuario.Coletor) {
         router.replace('/(tabs)/normal');
-      } else if (user.tipoUsuario === 'Ponto de Coleta') {
+      } else if (user.tipoUsuario === TipoUsuario.PontoColeta) {
         router.replace('/(tabs)/pontoColeta');
       } else {
         router.replace('/(tabs)/admin');

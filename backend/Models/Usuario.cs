@@ -25,6 +25,7 @@ namespace AppReciclagem.Models
             this.Cpf = cpf;
             this.Cnpj = cnpj;
             this.DataRegistro = DateTime.Now;
+            this.FotoPath = string.Empty;
         }
 
         [Key]
@@ -53,10 +54,10 @@ namespace AppReciclagem.Models
         public int TipoUsuario { get; set; }
 
         [Column("cpf")]
-        public string Cpf { get; set; }
+        public string? Cpf { get; set; }
 
         [Column("cnpj")]
-        public string Cnpj { get; set; }
+        public string? Cnpj { get; set; }
 
         [Column("foto_path")]
         public string FotoPath { get; set; }

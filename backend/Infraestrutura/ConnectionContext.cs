@@ -15,6 +15,8 @@ namespace AppReciclagem.Infraestrutura
 
         public DbSet<Cupom> Cupons { get; set; }
 
+        public DbSet<HistoricoResgateCupom> ResgatesCupons { get; set; }
+
         public DbSet<MaterialColeta> MaterialColeta { get; set; }
 
         public DbSet<RegistroColeta> RegistroColeta { get; set; }

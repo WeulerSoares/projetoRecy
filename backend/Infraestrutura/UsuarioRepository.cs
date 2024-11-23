@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AppReciclagem.Models;
+using AppReciclagem.Enums;
 
 namespace AppReciclagem.Infraestrutura
 {
@@ -21,8 +22,9 @@ namespace AppReciclagem.Infraestrutura
             // Verificar se o email, CPF ou CNPJ já existem no banco de dados
             var usuarioExistente = await context.Usuarios
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Email == usuario.Email || (u.Cpf != "" && u.Cpf == usuario.Cpf) || 
-                (u.Cnpj != "" && u.Cnpj == usuario.Cnpj));
+                .FirstOrDefaultAsync(u => u.Email == usuario.Email 
+                    || (u.TipoUsuario != (int)TipoUsuario.PontoColeta && u.Cpf == usuario.Cpf) 
+                    || (u.TipoUsuario == (int)TipoUsuario.PontoColeta && u.Cnpj == usuario.Cnpj));
 
             return usuarioExistente != null;
         }
@@ -37,6 +39,11 @@ namespace AppReciclagem.Infraestrutura
         {
             context.Usuarios.Update(usuario);
             context.SaveChanges();
+        }
+
+        public int ObterPontosAcumulados(int idUsuario)
+        {
+            return context.Usuarios.First(u => u.Id == idUsuario).PontosAcumulados;
         }
 
         public Usuario ObterPeloCPFUsuario(string cpf)

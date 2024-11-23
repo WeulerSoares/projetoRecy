@@ -12,10 +12,11 @@ namespace AppReciclagem.Models
             int quantidade,
             int pontos)
         {
-            IdEmpresa = idEmpresa;
-            Valor = valor;
-            Quantidade = quantidade;
-            Pontos = pontos;
+            this.IdEmpresa = idEmpresa;
+            this.Valor = valor;
+            this.Quantidade = quantidade;
+            this.QuantidadeEstoque = quantidade;
+            this.Pontos = pontos;
         }
 
         [Key]
@@ -30,6 +31,9 @@ namespace AppReciclagem.Models
 
         [Column("quantidade")]
         public int Quantidade { get; set; }
+
+        [Column("quantidade_estoque")]
+        public int QuantidadeEstoque { get; set; }
 
         [Column("pontos")]
         public int Pontos { get; set; }

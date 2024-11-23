@@ -9,7 +9,7 @@ export class EmpresaParceiraService {
     return response.data;
   }  
   
-  static async criarEmpresaParceira(empresaParceira: EmpresaParceira): Promise<EmpresaParceira> {
+  static async criarEmpresaParceira(empresaParceira: EmpresaParceira): Promise<{ message: string; }> {
     const formData = new FormData();
 
     formData.append("Cnpj", empresaParceira.cnpj);
@@ -21,12 +21,20 @@ export class EmpresaParceiraService {
 
     formData.append("Logo", blob, "logo.png");
 
-    const result = await axios.post<EmpresaParceira>(API_URL, formData, {
+    const result = await axios.post<{ message: string; }>(API_URL, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
 
     return result.data;
+  }
+  
+  static async obterLogo(idEmpresa: number): Promise<string> {
+    const response = await axios.get<Blob>(`${API_URL}/${idEmpresa}/logo`, {
+      responseType: "blob",
+    });
+
+    return URL.createObjectURL(response.data);
   }
 }

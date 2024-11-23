@@ -19,14 +19,23 @@ namespace AppReciclagem.Controllers
             return Ok(empresasParceira);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("{id}/logo")]
-        public IActionResult Get(int idEmpresa)
+        public IActionResult Get(int id)
         {
-            var empresasParceira = empresaParceiraRepository.Get(idEmpresa);
+            var empresasParceira = empresaParceiraRepository.Get(id);
 
-            var dataBytes = System.IO.File.ReadAllBytes(empresasParceira.LogoPath);
-            return File(dataBytes, "image/png");
+            var logoPath = empresasParceira.LogoPath;
+
+            if (!string.IsNullOrWhiteSpace(logoPath) && System.IO.File.Exists(logoPath))
+            {
+                var fileStream = System.IO.File.OpenRead(logoPath);
+                return File(fileStream, "image/png");
+            }
+            else
+            {
+                return NotFound(new { message = "Logo não encontrada." });
+            }
         }
 
         [HttpPost]
@@ -36,7 +45,7 @@ namespace AppReciclagem.Controllers
             {
                 if (empresaParceiraViewModel == null)
                 {
-                    return BadRequest("Dados da empresa parceira não fornecidas.");
+                    return BadRequest(new { message = "Dados da empresa parceira não fornecidas." });
                 }
 
                 var cnpjSemCaracteresEspeciais = Regex.Replace(empresaParceiraViewModel.Cnpj, "[^0-9]", "");
@@ -53,7 +62,7 @@ namespace AppReciclagem.Controllers
 
                 if (await empresaParceiraRepository.Exists(empresaParceira))
                 {
-                    return BadRequest("Email, CPF ou CNPJ já estão em uso.");
+                    return BadRequest(new { message = "Email, CPF ou CNPJ já estão em uso." });
                 }
 
                 empresaParceiraRepository.Add(empresaParceira);

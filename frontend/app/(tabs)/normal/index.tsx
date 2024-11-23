@@ -1,139 +1,167 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useEffect, useState } from 'react';
-//import React, { useEffect, useState } from 'react';
-//import { Employee, EmployeeService } from './services/employeeService';
-import { View, Text, FlatList } from 'react-native';
-import LogoutButton from '@/components/logoutButton';
-import { useUser } from '@/components/UserContext';
+const locations = [
+  { id: '1', name: 'Ferro Velho Beira Rio', material: 'Alumínio', price: 'R$ 6,50/kg', rating: 5 },
+  { id: '2', name: 'MW Recicláveis', material: 'Papelão', price: 'R$ 2,70/kg', rating: 5 },
+  { id: '3', name: 'Casa das Garrafas', material: 'Alumínio', price: 'R$ 3,00/kg', rating: 4.5 },
+];
 
-export default function HomeScreen() {
-  //const [employees, setEmployees] = useState<Employee[]>([]);
-  const user = useUser();
-
-  /*
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const data = await EmployeeService.getEmployees();
-        setEmployees(data);
-      } catch (error) {
-        console.error('Erro ao buscar Employees:', error);
-      }
-    };
-
-    fetchEmployees();
-  }, []);
-
-  <View style={styles.stepContainer}>
-        <Text style={styles.stepContainer}>Lista de Employees</Text>
-        <FlatList
-          data={employees}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View>
-              <Text style={styles.stepContainer}>{item.name}</Text>
-              <Text style={styles.stepContainer}>Idade: {item.age}</Text>
-            </View>
-          )}
-        />
+export default function TabTwoScreen() {
+  const renderLocationCard = (item: any) => (
+    <View key={item.id} style={styles.card}>
+      <View style={styles.cardContent}>
+        <View style={styles.placeholderImage} />
+        <View style={styles.cardText}>
+          <Text style={styles.cardTitle}>{item.name}</Text>
+          <Text style={styles.cardDetails}>Material: {item.material}</Text>
+          <Text style={styles.cardDetails}>Preço: {item.price}</Text>
+          <View style={styles.ratingContainer}>
+            <FontAwesome name="star" size={16} color="orange" />
+            <Text style={styles.rating}>{item.rating},0</Text>
+          </View>
+        </View>
       </View>
-*/
+      <TouchableOpacity style={styles.moreInfoButton}>
+        <Text style={styles.moreInfoText}>Mais informações</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome! teste</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-      <View style={styles.container}>
-      <Text style={styles.title}>Perfil do Usuário</Text>
-      {user ? (
-        <>
-          <Text>ID: {user.nome}</Text>
-          <Text>E-mail: {user.email}</Text>
-          {/* Exiba outras informações do usuário aqui */}
-        </>
-      ) : (
-        <Text>Usuário não logado</Text>
-      )}
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text style={styles.headerText}>Encontre o melhor ponto de coleta para você</Text>
+        <View style={styles.filterContainer}>
+          <TouchableOpacity style={styles.filterButton}>
+            <Text style={styles.filterButtonText}>Material ▼</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.filterButton}>
+            <Text style={styles.filterButtonText}>Distância</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.filterButton}>
+            <Text style={styles.filterButtonText}>Favoritos</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.mapPlaceholder}>
+          <Image 
+            source={{ uri: 'https://via.placeholder.com/300x200.png?text=Mapa+Simulado' }} 
+            style={styles.mapImage}
+          />
+        </View>
+        {locations.map(renderLocationCard)}
+      </ScrollView>
     </View>
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Perfil do Usuário</Text>
-      <LogoutButton />
-    </View>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-    color: '#AAA'
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#6dc06d',
+    paddingTop: 40,
   },
-  title: {
-    fontSize: 24,
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 80, // Para dar espaço para a barra de navegação inferior
+  },
+  headerText: {
+    fontSize: 22,
     fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
     marginBottom: 20,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+  },
+  filterButton: {
+    backgroundColor: 'white',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  filterButtonText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  mapPlaceholder: {
+    backgroundColor: '#e0e0e0',
+    height: 200,
+    borderRadius: 15,
+    marginBottom: 20,
+    overflow: 'hidden',
+  },
+  mapImage: {
+    width: '100%',
+    height: '100%',
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 5,
+  },
+  cardContent: {
+    flexDirection: 'row',
+  },
+  placeholderImage: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 8,
+    marginRight: 16,
+  },
+  cardText: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  cardDetails: {
+    color: 'gray',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  rating: {
+    fontSize: 16,
+    marginLeft: 4,
+    color: 'orange',
+  },
+  moreInfoButton: {
+    marginTop: 8,
+    alignSelf: 'flex-start',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: '#ededed',
+    borderRadius: 8,
+  },
+  moreInfoText: {
+    color: '#555',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    backgroundColor: '#333',
+  },
+  activeIcon: {
+    color: '#6dc06d',
   },
 });

@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using AppReciclagem.Models;
 using AppReciclagem.ViewModel;
+using AppReciclagem.Enums;
 
 namespace AppReciclagem.Controllers
 {
@@ -36,15 +37,18 @@ namespace AppReciclagem.Controllers
                     return BadRequest("Dados do usuário não fornecidos.");
                 }
 
+                var usarCpf = usuarioViewModel.TipoUsuario == (int)TipoUsuario.Coletor && !string.IsNullOrWhiteSpace(usuarioViewModel.Cpf);
+                var usarCnpj = usuarioViewModel.TipoUsuario == (int)TipoUsuario.PontoColeta && !string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj);
+
                 var usuario = new Usuario(
                     usuarioViewModel.FirebaseUid,
                     usuarioViewModel.Nome,
                     usuarioViewModel.Email,
                     usuarioViewModel.DataNascimento,
                     0,
-                    usuarioViewModel.TipoUsuario.Equals("Coletor") ? 1 : 2,
-                    Regex.Replace(usuarioViewModel.Cpf, "[^0-9]", ""),
-                    Regex.Replace(usuarioViewModel.Cnpj, "[^0-9]", ""));
+                    usuarioViewModel.TipoUsuario,
+                    usarCpf ? Regex.Replace(usuarioViewModel.Cpf, "[^0-9]", "") : null,
+                    usarCnpj ? Regex.Replace(usuarioViewModel.Cnpj, "[^0-9]", "") : null);
 
                 if (await usuarioRepository.Exists(usuario))
                 {
@@ -53,7 +57,7 @@ namespace AppReciclagem.Controllers
 
                 usuarioRepository.Add(usuario);
 
-                return Ok(new { message = "Usuário cadastrado com sucesso!" });
+                return Ok(new { message = $"Usuário {usuario.Nome} cadastrado com sucesso!" });
             }
             catch (Exception ex)
             {
@@ -73,11 +77,6 @@ namespace AppReciclagem.Controllers
                 }
 
                 var fotoPath = Path.Combine("Storage\\Usuarios", $"{fotoUsuarioViewModel.IdUsuario}.png");
-
-                if (System.IO.File.Exists(fotoPath))
-                {
-                    System.IO.File.Delete(fotoPath);
-                }
 
                 using Stream fileStream = new FileStream(fotoPath, FileMode.Create);
                 fotoUsuarioViewModel.Foto.CopyTo(fileStream);
@@ -130,6 +129,21 @@ namespace AppReciclagem.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Erro ao atualizar usuário", details = ex.Message });
+            }
+        }
+
+        [HttpGet("{idUsuario}/pontos")]
+        public IActionResult ObterPontos(int idUsuario)
+        {
+            try
+            {
+                var pontos = usuarioRepository.ObterPontosAcumulados(idUsuario);
+
+                return Ok(pontos);
+            } 
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao buscar pontos acumulados usuário.", details = ex.Message });
             }
         }
     }

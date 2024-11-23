@@ -9,8 +9,8 @@ export class UsuarioService {
     return response.data;
   }
 
-  static async criarUsuario(usuario: Usuario): Promise<Usuario> {
-    const response = await axios.post<Usuario>(API_URL, usuario);
+  static async criarUsuario(usuario: Usuario): Promise<{ message: string; }> {
+    const response = await axios.post<{ message: string; }>(API_URL, usuario);
     return response.data;
   }
 
@@ -39,6 +39,11 @@ export class UsuarioService {
     });
 
     return result.data;
+  }
+
+  static async obterPontosAcumulados(idUsuario: number): Promise<number> {
+    const response = await axios.get<number>(`${API_URL}/${idUsuario}/pontos`);
+    return response.data;
   }
 
   static async obterPeloCPF(cpf: string): Promise<Usuario> {

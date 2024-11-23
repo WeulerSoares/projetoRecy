@@ -91,13 +91,16 @@ export default function CadastroEmpresa() {
       const response = await EmpresaParceiraService.criarEmpresaParceira(empresaParceira);
 
       if (response) {
-        console.log('Usuário cadastrado com sucesso:', response);
-      } else {
-        console.error('Erro ao cadastrar usuário', response);
+        alert(response.message);
       }
-    } catch (error) {
-      console.error("Erro ao cadastrar o usuário:", error);
-      alert("Erro de conexão. Tente novamente mais tarde.");
+    } catch (error: any) {
+      console.error("Erro ao cadastrar empresa parceira:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+          alert(error.response.data.message);
+      } else {
+          alert('Erro inesperado ao cadastrar empresa parceira');
+      }
     }
   };
 

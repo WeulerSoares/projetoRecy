@@ -3,11 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { cpf, cnpj } from 'cpf-cnpj-validator';
 import validator from 'validator';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, deleteUser } from 'firebase/auth';
 import { UsuarioService } from './(tabs)/services/usuarioService';
 import { Usuario } from './(tabs)/services/models/usuario';
 import { FirebaseError } from 'firebase/app';
 import { useRouter } from 'expo-router';
+import { TipoUsuario } from './(tabs)/services/enums/tipoUsuario';
 
 interface CustomRadioButtonProps {
   label: string;
@@ -47,7 +48,7 @@ export default function App() {
   const [cnpjInput, setCnpjInput] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [tipoUsuario, setTipoUsuario] = useState('Coletor');
+  const [tipoUsuario, setTipoUsuario] = useState(TipoUsuario.Coletor);
 
   const [cpfValido, setCpfValido] = useState(true);
   const [cnpjValido, setCnpjValido] = useState(true);
@@ -114,17 +115,17 @@ export default function App() {
   }
 
   const cadastrarUsuario = async () => {
-    if (!nome || (tipoUsuario === 'Coletor' && !cpf) || (tipoUsuario === 'Ponto de Coleta' && !cnpj) || !email || !senha) {
+    if (!nome || (tipoUsuario === TipoUsuario.Coletor && !cpf) || (tipoUsuario === TipoUsuario.PontoColeta && !cnpj) || !email || !senha) {
       alert("Por favor, preencha todos os campos.");
       return;
     }
 
-    if (tipoUsuario === 'Coletor' && !cpfValido) {
+    if (tipoUsuario === TipoUsuario.Coletor && !cpfValido) {
       alert("Por favor, preencha um CPF válido.");
       return;
     }
     
-    if (tipoUsuario === 'Ponto de Coleta' && !cnpjValido) {
+    if (tipoUsuario === TipoUsuario.PontoColeta && !cnpjValido) {
       alert("Por favor, preencha um CNPJ válido.");
       return;
     }
@@ -145,21 +146,27 @@ export default function App() {
         nome: nome,
         email: user.email,
         dataNascimento: undefined,
-        pontosAcumulados: 0,
         tipoUsuario: tipoUsuario,
         cpf: cpfInput,
         cnpj: cnpjInput,
       } as Usuario;
 
       const response = await UsuarioService.criarUsuario(usuario);
-
+      
       if (response) {
-        console.log('Usuário cadastrado com sucesso:', response);
+        alert(response.message);
+        router.replace('/login');
       } else {
         console.error('Erro ao cadastrar usuário', response);
       }
     } catch (error) {
+      const user = auth.currentUser;
+      
       if (error instanceof FirebaseError) {
+        if (user) {
+          await deleteUser(user);
+        }
+
         switch (error.code) {
           case 'auth/email-already-in-use':
             alert("O e-mail já está em uso.");
@@ -175,6 +182,10 @@ export default function App() {
             console.error("Erro ao cadastrar o usuário:", error.message);
         }
       } else {
+        if (user) {
+          await deleteUser(user);
+        }
+        
         console.error("Erro ao cadastrar o usuário:", error);
         alert("Erro de conexão. Tente novamente mais tarde.");
       }
@@ -190,16 +201,16 @@ export default function App() {
       <View style={styles.radioGroup}>
         <CustomRadioButton
           label="Ponto de Coleta"
-          selected={tipoUsuario === 'Ponto de Coleta'}
-          onPress={() => setTipoUsuario('Ponto de Coleta')}
+          selected={tipoUsuario === TipoUsuario.PontoColeta}
+          onPress={() => setTipoUsuario(TipoUsuario.PontoColeta)}
           selectedColor="#558C40"
           unselectedColor="#558C40"
           labelColor="#366923"
         />
         <CustomRadioButton
           label="Coletor"
-          selected={tipoUsuario === 'Coletor'}
-          onPress={() => setTipoUsuario('Coletor')}
+          selected={tipoUsuario === TipoUsuario.Coletor}
+          onPress={() => setTipoUsuario(TipoUsuario.Coletor)}
           selectedColor="#558C40"
           unselectedColor="#558C40"
           labelColor="#366923"
@@ -216,7 +227,7 @@ export default function App() {
         />
       </View>
 
-      {tipoUsuario === 'Ponto de Coleta' && <View style={[styles.inputContainer, !cnpjValido && styles.invalidInput]}>
+      {tipoUsuario === TipoUsuario.PontoColeta && <View style={[styles.inputContainer, !cnpjValido && styles.invalidInput]}>
         <MaterialCommunityIcons name="card-account-details" size={24} style={styles.icon} />
         <TextInput
           placeholder="Digite seu CNPJ"
@@ -238,7 +249,7 @@ export default function App() {
 
       {!cnpjValido && cnpjInput.length !== 0 && <Text style={styles.errorText}>CNPJ inválido</Text>}
 
-      {tipoUsuario === 'Coletor' && <View style={[styles.inputContainer, !cpfValido && styles.invalidInput]}>
+      {tipoUsuario === TipoUsuario.Coletor && <View style={[styles.inputContainer, !cpfValido && styles.invalidInput]}>
         <MaterialCommunityIcons name="card-account-details" size={24} style={styles.icon} />
         <TextInput
           placeholder="Digite seu CPF"

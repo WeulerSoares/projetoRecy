@@ -54,12 +54,13 @@ export default function CadastroCupom() {
       const response = await CupomService.criarCupom(cupom);
 
       if (response) {
-        console.log('Usuário cadastrado com sucesso:', response);
+        alert(response.message);
       } else {
-        console.error('Erro ao cadastrar usuário', response);
+        console.error('Erro ao criar cupom');
+        alert('Erro ao criar cupom');
       }
     } catch (error) {
-      console.error("Erro ao cadastrar o usuário:", error);
+      console.error("Erro ao criar cupom:", error);
       alert("Erro de conexão. Tente novamente mais tarde.");
     }
   };
