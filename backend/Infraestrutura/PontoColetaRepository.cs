@@ -6,8 +6,7 @@ namespace AppReciclagem.Infraestrutura
     {
         public PontoColeta? Get(int idUsuario)
         {
-            var response = context.PontoColeta.FirstOrDefault(item => item.IdUsuario == idUsuario);
-            var response = context.PontosColeta.First(item => item.IdUsuario == idUsuario);
+            var response = context.PontosColeta.FirstOrDefault(item => item.IdUsuario == idUsuario);
             return response;
         }
 
@@ -49,7 +48,7 @@ namespace AppReciclagem.Infraestrutura
             double latitude,
             double longitude)
         {
-            var pontosColeta = context.PontoColeta.ToList();
+            var pontosColeta = context.PontosColeta.ToList();
 
             var pontosProximos = pontosColeta
                 .Where(ponto => CalculateHaversine(latitude, longitude, ponto.Latitude, ponto.Longitude) <= range)
