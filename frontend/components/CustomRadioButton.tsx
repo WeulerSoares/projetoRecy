@@ -1,5 +1,3 @@
-// components/CustomRadioButton.tsx
-
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
@@ -16,9 +14,9 @@ const CustomRadioButton: React.FC<CustomRadioButtonProps> = ({
   label,
   selected,
   onPress,
-  selectedColor = '#4CAF50', // Cor quando selecionado
-  unselectedColor = '#B5B5B5', // Cor quando não selecionado
-  labelColor = '#333', // Cor do texto
+  selectedColor = '#4CAF50',
+  unselectedColor = '#B5B5B5',
+  labelColor = '#333',
 }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.radioContainer}>

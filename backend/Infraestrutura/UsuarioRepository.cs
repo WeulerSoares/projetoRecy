@@ -19,7 +19,6 @@ namespace AppReciclagem.Infraestrutura
 
         public async Task<bool> Exists(Usuario usuario)
         {
-            // Verificar se o email, CPF ou CNPJ já existem no banco de dados
             var usuarioExistente = await context.Usuarios
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Email == usuario.Email 

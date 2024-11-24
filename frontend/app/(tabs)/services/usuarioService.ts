@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Usuario } from './models/usuario';
+import { PontoColetaFavorito } from './models/pontoColetaFavorito';
 
 const API_URL = 'https://localhost:7167/api/v1/usuario';
 
@@ -53,6 +54,16 @@ export class UsuarioService {
 
   static async atualizarUsuario(idUsuario: number, usuario: Usuario) {
     const response = await axios.put(`${API_URL}/${idUsuario}`, usuario);
+    return response.data;
+  }
+
+  static async obterPontosColetaFavoritos(idUsuario: number): Promise<PontoColetaFavorito[]> {
+    const response = await axios.get<PontoColetaFavorito[]>(`${API_URL}/${idUsuario}/favoritos/pontosColeta`);
+    return response.data;
+  }
+
+  static async alterarFavoritoPontoColeta(idUsuario: number, idPontoColeta: number) {
+    const response = await axios.patch(`${API_URL}/${idUsuario}/favoritos/${idPontoColeta}`);
     return response.data;
   }
 }

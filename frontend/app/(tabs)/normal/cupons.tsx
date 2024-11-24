@@ -99,7 +99,7 @@ export default function CuponsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#77CA56",
+    backgroundColor: "#6dc06d",
     paddingHorizontal: 16,
     paddingTop: 40,
   },
@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 10,
     padding: 16,
+    paddingTop: 0,
     marginBottom: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -142,7 +143,6 @@ const styles = StyleSheet.create({
   couponHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
   },
   iconPlaceholder: {
     width: 40,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   button: {
-    backgroundColor: "#6AC259",
+    backgroundColor: "#559555",
     borderRadius: 8,
     paddingVertical: 10,
     alignItems: "center",
