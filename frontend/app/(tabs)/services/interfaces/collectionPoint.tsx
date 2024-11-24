@@ -1,6 +1,5 @@
-export interface PontoColeta {
+export type CollectionPoint = {
     id: number;
-    idUsuario: number;
     nome: string;
     cnpj: string;
     cep: string;
@@ -9,6 +8,4 @@ export interface PontoColeta {
     bairro: string;
     cidade: string;
     estado: string;
-    latitude: number;
-    longitude: number;
 }

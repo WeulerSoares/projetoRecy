@@ -11,12 +11,17 @@ import axios from 'axios';
 export default function UpdateAddressScreen() {
 
   const [location, setLocation] = useState<LocationObject | null>(null);
+  const [pontoColeta, setPontoColeta] = useState<PontoColeta | null>(null);
   const [cep, setCep] = useState('');
   const [rua, setRua] = useState('');
   const [numero, setnNumero] = useState('');
   const [bairro, setBairro] = useState('');
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
+  const [controller, setController] = useState('');
+  const [titulo, setTitulo] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
   const user = useUser();
 
   const estados: { [key: string]: string } = {
@@ -59,6 +64,41 @@ export default function UpdateAddressScreen() {
     uf: string;
   }
 
+  async function checkUpdateOrCreate() {
+    if (user?.id) {
+      if (pontoColeta) {
+        updatePontoColeta();
+      } else {
+        createPontoColeta();
+      }
+    }
+
+  }
+
+  async function fetchPontoColeta() {
+    if (!user?.id || controller)
+      return;
+
+    const pontoColeta = await PontoColetaService.getPontoColeta(user.id);
+    console.log("PontoColeta:", pontoColeta);
+
+    if (pontoColeta) {
+      setPontoColeta(pontoColeta);
+      setCep(pontoColeta.cep);
+      setRua(pontoColeta.rua);
+      setnNumero(String(pontoColeta.numero));
+      setBairro(pontoColeta.bairro);
+      setCidade(pontoColeta.cidade);
+      setEstado(pontoColeta.estado);
+      setController('Atualizado');
+      setTitulo("Atualizar endereço");
+    } else {
+      setTitulo("Cadastrar endereço");
+    }
+
+
+  }
+
 
   async function requestLocationPermissions() {
     const { granted } = await requestForegroundPermissionsAsync();
@@ -71,6 +111,7 @@ export default function UpdateAddressScreen() {
 
   useEffect(() => {
     requestLocationPermissions();
+    fetchPontoColeta();
   }, []);
 
   const getAdress = async () => {
@@ -104,6 +145,7 @@ export default function UpdateAddressScreen() {
       const cepResponse = await apiViaCep.get<ViaCepResponse[]>(`${uf}/${data.address.city}/${data.address.road}/json/`);
 
       const cepData = cepResponse.data;
+      console.log(data);
 
       if (cepData.length > 1) {
         const realLocation = cepData.find((item: ViaCepResponse) => item.bairro === data.address.neighbourhood || item.bairro === data.address.village || item.bairro === data.address.city_district)
@@ -134,7 +176,7 @@ export default function UpdateAddressScreen() {
     }
   };
 
-  const updateAddress = async () => {
+  const updatePontoColeta = async () => {
 
     if (
       !cep ||
@@ -148,7 +190,8 @@ export default function UpdateAddressScreen() {
     }
 
     try {
-      const pontoColeta = {
+      const pontoColetaData = {
+        id: pontoColeta?.id,
         idUsuario: user?.id,
         nome: user?.nome,
         cnpj: user?.cnpj,
@@ -158,11 +201,16 @@ export default function UpdateAddressScreen() {
         cidade: cidade,
         estado: estado,
         numero: parseInt(numero),
+        latitude: latitude || location?.coords.latitude,
+        longitude: longitude || location?.coords.longitude
       } as PontoColeta
-      const response = await PontoColetaService.createPontoColeta(pontoColeta);
+      const response = await PontoColetaService.updatePontoColeta(pontoColetaData);
 
       if (response) {
-        console.log('Endereço Ponto Coleta cadastrado com sucesso:', response);
+        alert('Endereço Ponto Coleta cadastrado com sucesso!');
+        setLatitude('');
+        setLatitude('');
+        requestLocationPermissions();
       } else {
         console.error('Erro ao cadastrar usuário', response);
       }
@@ -171,6 +219,51 @@ export default function UpdateAddressScreen() {
     }
   }
 
+
+  const createPontoColeta = async () => {
+
+    if (
+      !cep ||
+      !rua ||
+      !bairro ||
+      !cidade ||
+      !estado ||
+      !numero) {
+      alert("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    try {
+      const pontoColetaData = {
+        id: pontoColeta?.id,
+        idUsuario: user?.id,
+        nome: user?.nome,
+        cnpj: user?.cnpj,
+        cep: cep,
+        rua: rua,
+        bairro: bairro,
+        cidade: cidade,
+        estado: estado,
+        numero: parseInt(numero),
+        latitude: latitude || location?.coords.latitude,
+        longitude: longitude || location?.coords.longitude
+      } as PontoColeta
+      const response = await PontoColetaService.createPontoColeta(pontoColetaData);
+
+      if (response) {
+        alert('Endereço Ponto Coleta atualizado com sucesso!');
+        setLatitude('');
+        setLatitude('');
+        requestLocationPermissions();
+      } else {
+        console.error('Erro ao cadastrar usuário', response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
   async function checkCEP(cep: number) {
     try {
       const api = axios.create({
@@ -178,17 +271,33 @@ export default function UpdateAddressScreen() {
       });
 
       const response = await api.get(`${cep}/json/`);
+      console.log(response.data)
       const data = response.data as {
         logradouro: string;
         bairro: string;
         localidade: string;
         estado: string;
-        cep: string
+        cep: string;
+        uf: string
       }
 
+      const locationResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&street=${data.logradouro}&city=${data.uf}&state=${data.estado}&country=Brazil`);
+      const locationData = await locationResponse.json();
       console.log({
-        response: data
+        latitude: latitude,
+        longitude: longitude,
+        response: locationResponse,
+        data: locationData
       })
+      if (locationData.length > 0) {
+        const { lat, lon } = locationData[0];
+        setLatitude(lat);
+        setLongitude(lon);
+      } else {
+        alert("Não foi possível encontrar as coordenadas para este endereço.");
+      }
+
+
 
       setRua(data.logradouro)
       setBairro(data.bairro)
@@ -216,7 +325,7 @@ export default function UpdateAddressScreen() {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={[styles.scrollContent, { flexGrow: 1 }]}>
-        <Text style={styles.headerText}>Atualizar endereço</Text>
+        <Text style={styles.headerText}>{titulo}</Text>
 
         <TouchableOpacity
           style={styles.locationButton}
@@ -256,7 +365,8 @@ export default function UpdateAddressScreen() {
           placeholderTextColor="#E2E2E2"
           keyboardType="numeric"
           value={numero}
-          onChangeText={setnNumero} />
+          onChangeText={setnNumero}
+          maxLength={5} />
         <TextInput style={styles.input}
           placeholder="Bairro"
           placeholderTextColor="#E2E2E2"
@@ -273,7 +383,7 @@ export default function UpdateAddressScreen() {
           value={estado}
           onChangeText={setEstado} />
 
-        <TouchableOpacity style={styles.confirmButton} onPress={updateAddress}>
+        <TouchableOpacity style={styles.confirmButton} onPress={checkUpdateOrCreate}>
           <Text style={styles.confirmButtonText}>CONFIRMAR</Text>
         </TouchableOpacity>
       </ScrollView>

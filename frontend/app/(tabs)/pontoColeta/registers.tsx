@@ -2,26 +2,18 @@ import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
-    TouchableOpacity,
     StyleSheet,
-    Modal,
-    TextInput,
     FlatList,
 } from 'react-native';
-import { MaterialColeta } from '../services/models/materialColeta';
-import { toFloat } from 'validator';
 import { MaterialColetaService } from '../services/materialColetaService';
 import { useUser } from '@/components/UserContext';
-import { Picker } from '@react-native-picker/picker';
 import { PontoColetaService } from '../services/pontoColetaService';
-import materialLabels from '../services/interfaces/materialLabels';
 import { RegistroColetaService } from '../services/registroColetaService';
 import { RegisterItem } from '../services/interfaces/registerItem';
 
 export default function TipoMaterialRecolhido() {
 
     const [items, setItems] = useState<RegisterItem[]>([]);
-    const [selectedItem, setSelectedItem] = useState<RegisterItem | null>(null);
     const [tipoMateriais, setTipoMateriais] = useState<{ [key: number]: string }>({});
     const user = useUser();
     const groupedItems = groupByDate(items);

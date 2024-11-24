@@ -6,7 +6,7 @@
 
         Usuario ObterPeloIdUsuario(int id);
 
-        Usuario ObterPeloCPFUsuario(string cpf);
+        Usuario? ObterPeloCPFUsuario(string cpf);
 
         void Add(Usuario usuario);
 
