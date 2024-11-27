@@ -92,6 +92,24 @@ export default function TipoMaterialRecolhido() {
 
     }
 
+    const obterDescricaoPreco = (preco: string, tipoMedida: string) => {
+        let medida = '';
+
+        switch (tipoMedida) {
+            case 'peso':
+                medida = 'kg';
+                break;
+            case 'volume':
+                medida = 'L';
+                break;
+            case 'unidade':
+                medida = 'Unidade';
+                break;
+            }
+
+        return `R$ ${preco}/${medida}`;
+    }
+
     const obterItens = async () => {
         try {
             if (user?.id) {
@@ -102,7 +120,7 @@ export default function TipoMaterialRecolhido() {
                     id: material.id.toString(),
                     tipo: material.tipoMaterial,
                     medida: material.medida,
-                    preco: `R$ ${material.preco.toFixed(2)}/${material.medida}`,
+                    preco: obterDescricaoPreco(material.preco, material.medida),
                 }));
 
                 setItems(formattedData);
@@ -198,7 +216,7 @@ export default function TipoMaterialRecolhido() {
                             )
                         }
                         dropdownIconColor="#558C40">
-                        <Picker.Item label='KG' value="kg" />
+                        <Picker.Item label='Peso (kg)' value="peso" />
                         <Picker.Item label='Volume' value="volume" />
                         <Picker.Item label='Unidade' value="unidade" />
                     </Picker>

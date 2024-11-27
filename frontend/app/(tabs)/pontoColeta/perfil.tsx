@@ -29,16 +29,14 @@ export default function CadastroCupom() {
     try {
       const result = await ImagePicker.launchImageLibrary({
         mediaType: 'photo',
-        quality: 1, // Qualidade da imagem
+        quality: 1,
       });
 
       if (result.assets && result.assets.length > 0) {
         const uri = result.assets[0].uri;
         setSelectedImage(uri!);
 
-        if (selectedImage) {
-          await UsuarioService.adicionarFoto(user?.id!, selectedImage);
-        }
+        await UsuarioService.adicionarFoto(user?.id!, uri!);
       }
     } catch (error) {
       alert('Não foi possível selecionar a imagem.');

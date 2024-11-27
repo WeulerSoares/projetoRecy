@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import StarRating from 'react-native-star-rating-widget';
-import { useRouter } from 'expo-router';
-import { UsuarioService } from '../services/usuarioService';
+import { Link, useFocusEffect } from 'expo-router';
+import { UsuarioService } from '../../services/usuarioService';
 import { useUser } from '@/components/UserContext';
-import { PontoColetaFavorito } from '../services/models/pontoColetaFavorito';
+import { PontoColetaFavorito } from '../../services/models/pontoColetaFavorito';
 
 export default function FavoritosScreen() {
   const [pontosColeta, setPontosColeta] = useState<PontoColetaFavorito[]>([]);
 
   const user = useUser();
-  const router = useRouter();
 
   const carregarPontosColetaFavoritos = async () => {
     try {
@@ -34,30 +33,28 @@ export default function FavoritosScreen() {
     await carregarPontosColetaFavoritos();
   };
 
-  const verPerfil = async () => {
-    //router.replace('/(tabs)/admin');
-  };
-
-  useEffect(() => {
-    carregarPontosColetaFavoritos();
-  }, []);
-
+  useFocusEffect(
+    useCallback(() => {
+      carregarPontosColetaFavoritos();
+    }, [])
+  );
+  
   return (
     <View style={styles.container}>
       <ScrollView style={styles.list}>
         <Text style={styles.headerText}>Favoritos</Text>
-        {pontosColeta.map((local) => (
-          <View key={local.idPontoColeta} style={styles.card}>
+        {pontosColeta.map((PontoColeta) => (
+          <View key={PontoColeta.idPontoColeta} style={styles.card}>
             <View style={styles.imagePlaceholder} />
             <View style={styles.info}>
-              <Text style={styles.nome}>{local.nomePontoColeta}</Text>
+              <Text style={styles.nome}>{PontoColeta.nomePontoColeta}</Text>
               <View style={styles.actions}>
-                <TouchableOpacity style={styles.button} onPress={verPerfil}>
-                    <Text style={styles.buttonText}>Ver Perfil</Text>
+                <TouchableOpacity style={styles.button}>
+                  <Link href={{ pathname: '/normal/favoritos/perfilPontoColeta', params: { id: PontoColeta.idPontoColeta }}} style={styles.buttonText}> Ver Perfil</Link>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => toggleFavorito(local.idPontoColeta)}>
+                <TouchableOpacity onPress={() => toggleFavorito(PontoColeta.idPontoColeta)}>
                     <MaterialCommunityIcons
-                        name={local.favoritado ? "heart" : "heart-outline"}
+                        name={PontoColeta.favoritado ? "heart" : "heart-outline"}
                         size={30}
                         color={"#559555"}
                         style={styles.iconeFavorito}
@@ -66,13 +63,13 @@ export default function FavoritosScreen() {
               </View>
               <View style={styles.rating}>
                 <StarRating
-                    rating={local.avaliacao || 0}
+                    rating={PontoColeta.avaliacao || 0}
                     onChange={() => {}}
                     enableHalfStar
                     starSize={22}
                     style={styles.starRating}
                 />
-                <Text style={styles.ratingText}>{local.avaliacao ? local.avaliacao.toFixed(1) : 0}</Text>
+                <Text style={styles.ratingText}>{PontoColeta.avaliacao ? PontoColeta.avaliacao.toFixed(1) : 0}</Text>
               </View>
             </View>
           </View>

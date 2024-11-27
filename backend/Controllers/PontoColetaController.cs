@@ -17,12 +17,26 @@ namespace AppReciclagem.Controllers
             this.pontoColetaRepository = pontoColetaRepository;
         }
 
-        [HttpGet("{idUsuario}")]
+        [HttpGet("usuario/{idUsuario}")]
         public IActionResult Get(int idUsuario) 
         {
             try
             {
                 var pontoColeta = pontoColetaRepository.Get(idUsuario);
+                return Ok(pontoColeta);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao obter dados do ponto de coleta", details = ex.Message });
+            }
+        }
+
+        [HttpGet("{idPontoColeta}/usuario/{idUsuario}")]
+        public IActionResult ObterPerfilPontoColeta(int idPontoColeta, int idUsuario)
+        {
+            try
+            {
+                var pontoColeta = pontoColetaRepository.ObterPerfilPontoColeta(idPontoColeta, idUsuario);
                 return Ok(pontoColeta);
             }
             catch (Exception ex)
@@ -110,5 +124,21 @@ namespace AppReciclagem.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("{id}/foto")]
+        public IActionResult GetFoto(int id)
+        {
+            var fotoPath = pontoColetaRepository.ObterCaminhoFoto(id);
+
+            if (!string.IsNullOrWhiteSpace(fotoPath) && System.IO.File.Exists(fotoPath))
+            {
+                var fileStream = System.IO.File.OpenRead(fotoPath);
+                return File(fileStream, "image/png");
+            }
+            else
+            {
+                return NotFound("Foto não encontrada.");
+            }
+        }
     }
 }

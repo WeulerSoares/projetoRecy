@@ -66,4 +66,13 @@ export class UsuarioService {
     const response = await axios.patch(`${API_URL}/${idUsuario}/favoritos/${idPontoColeta}`);
     return response.data;
   }
+
+  static async alterarAvaliacaoPontoColeta(idUsuario: number, idPontoColeta: number, avaliacao: number) {
+    const response = await axios.patch(`${API_URL}/avaliacao`, {
+      idUsuario: idUsuario,
+      idPontoColeta: idPontoColeta,
+      avaliacao: avaliacao
+    });
+    return response.data;
+  }
 }
