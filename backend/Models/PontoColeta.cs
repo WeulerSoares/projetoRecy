@@ -15,7 +15,9 @@ namespace AppReciclagem.Models
             int numero,
             string bairro,
             string cidade,
-            string estado) 
+            string estado,
+            double latitude,
+            double longitude) 
         { 
             this.IdUsuario = idUsuario;
             this.Nome = nome;
@@ -27,6 +29,8 @@ namespace AppReciclagem.Models
             this.Cidade = cidade;
             this.Estado = estado;
             this.FotoPath = string.Empty;
+            this.Latitude = latitude;
+            this.Longitude = longitude;
         }
 
         [Key]
@@ -38,6 +42,12 @@ namespace AppReciclagem.Models
 
         [Column("id_usuario")]
         public int IdUsuario { get; set; }
+
+        [Column("latitude")]
+        public double Latitude {  get; set; }
+        
+        [Column("longitude")]
+        public double Longitude { get; set; }
 
         [Column("cnpj")]
         public string Cnpj { get; set; }

@@ -47,9 +47,9 @@ export class UsuarioService {
     return response.data;
   }
 
-  static async obterPeloCPF(cpf: string): Promise<Usuario> {
+  static async obterPeloCPF(cpf: string): Promise<Usuario | null | undefined> {
     const response = await axios.get<Usuario>(`${API_URL}/${cpf}/cpf`);
-    return response.data;
+    return response.data && Object.keys(response.data).length > 0 ? response.data : null;
   }
 
   static async atualizarUsuario(idUsuario: number, usuario: Usuario) {

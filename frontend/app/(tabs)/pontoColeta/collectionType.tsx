@@ -35,25 +35,31 @@ export default function TipoMaterialRecolhido() {
     }
 
     const addMaterialColeta = async () => {
+        if(!tipoMaterial || !medida || !preco) {
+            alert("Informe todos os campos para registrar um novo material");
+            return;
+        }
         try {
             if (user?.id) {
                 const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
-                const materialColeta = {
-                    idPontoColeta: pontoColeta.id,
-                    medida: medida,
-                    tipoMaterial: tipoMaterial,
-                    preco: toFloat(preco)
-                } as MaterialColeta;
+                if (pontoColeta) {
+                    const materialColeta = {
+                        idPontoColeta: pontoColeta.id,
+                        medida: medida,
+                        tipoMaterial: tipoMaterial,
+                        preco: toFloat(preco)
+                    } as MaterialColeta;
 
-                const response = await MaterialColetaService.addMaterialColeta(materialColeta);
+                    const response = await MaterialColetaService.addMaterialColeta(materialColeta);
 
-                if (response) {
-                    console.log('Material cadastrado com sucesso!', response);
-                    obterItens();
-                    setAddModalVisible(false);
-                    setTipoMaterial('');
-                    setPreco('');
-                    setMedida('');
+                    if (response) {
+                        console.log('Material cadastrado com sucesso!', response);
+                        obterItens();
+                        setAddModalVisible(false);
+                        setTipoMaterial('');
+                        setPreco('');
+                        setMedida('');
+                    }
                 }
             }
         }
@@ -64,24 +70,29 @@ export default function TipoMaterialRecolhido() {
     }
 
     const updateMaterialColeta = async () => {
+        if(selectedItem && !selectedItem.medida || !selectedItem?.preco) {
+            alert("Informe todos os campos para registrar um novo material");
+            return;
+        }
         try {
             if (selectedItem && user?.id) {
                 const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
-                console.log(selectedItem)
-                const precoFormatado = selectedItem.preco.replace(/[^\d,.-]/g, '').replace(',', '.');
-                const materialColeta = {
-                    id: selectedItem.id,
-                    idPontoColeta: pontoColeta.id,
-                    tipoMaterial: selectedItem.tipo,
-                    medida: selectedItem.medida,
-                    preco: toFloat(precoFormatado)
-                } as MaterialColeta
+                if (pontoColeta) {
+                    const precoFormatado = selectedItem.preco.replace(/[^\d,.-]/g, '').replace(',', '.');
+                    const materialColeta = {
+                        id: selectedItem.id,
+                        idPontoColeta: pontoColeta.id,
+                        tipoMaterial: selectedItem.tipo,
+                        medida: selectedItem.medida,
+                        preco: toFloat(precoFormatado)
+                    } as MaterialColeta
 
-                const response = await MaterialColetaService.atualizarMaterial(selectedItem.id, materialColeta);
-                if (response) {
-                    alert('Material cadastrado com sucesso!');
-                    obterItens();
-                    setEditModalVisible(false);
+                    const response = await MaterialColetaService.atualizarMaterial(selectedItem.id, materialColeta);
+                    if (response) {
+                        alert('Material atualizado com sucesso!');
+                        obterItens();
+                        setEditModalVisible(false);
+                    }
                 }
             }
 
@@ -114,7 +125,8 @@ export default function TipoMaterialRecolhido() {
         try {
             if (user?.id) {
                 const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
-                const response = await MaterialColetaService.obterMateriais(pontoColeta.id);
+                if (pontoColeta) {
+                    const response = await MaterialColetaService.obterMateriais(pontoColeta.id);
 
                 const formattedData: MaterialItem[] = response.map((material: any) => ({
                     id: material.id.toString(),
@@ -123,7 +135,8 @@ export default function TipoMaterialRecolhido() {
                     preco: obterDescricaoPreco(material.preco, material.medida),
                 }));
 
-                setItems(formattedData);
+                    setItems(formattedData);
+                }
             }
 
 

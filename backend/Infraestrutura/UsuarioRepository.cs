@@ -47,7 +47,7 @@ namespace AppReciclagem.Infraestrutura
 
         public Usuario ObterPeloCPFUsuario(string cpf)
         {
-            return context.Usuarios.First(f => f.Cpf == cpf);
+            return context.Usuarios.FirstOrDefault(f => f.Cpf == cpf);
         }
     }
 }

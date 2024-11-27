@@ -12,7 +12,8 @@ import measureTypes from '../services/interfaces/measureType';
 import { MaterialItem } from '../services/interfaces/materialItem';
 import { RegistroColeta } from '../services/models/registroColeta';
 import { RegistroColetaService } from '../services/registroColetaService';
-import { cnpj } from 'cpf-cnpj-validator';
+import { useRouter } from "expo-router";
+
 
 export default function RegistrarColeta() {
     const [tipoMaterial, setTipoMaterial] = useState('');
@@ -22,8 +23,32 @@ export default function RegistrarColeta() {
     const [items, setItems] = useState<MaterialItem[]>([]);
     const user = useUser();
     const [quantidade, setQuantidade] = useState('');
-    const [total, setTotal] = useState('');
     const [preco, setPreco] = useState('');
+    const router = useRouter();
+
+    async function checaPontoDeColetaExistente(userId: number) {
+        try {
+            const pontoColeta = await PontoColetaService.getPontoColeta(userId);
+
+            if (pontoColeta !== null) {
+                return;
+            }
+
+            router.replace("/(tabs)/pontoColeta/profile");
+            alert("É necessário que atualize suas informações para poder seguir com as funcionalidades!");
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
+
+    function resetaCampos() {
+        setCpf('');
+        setTipoMaterial('');
+        setQuantidade('');
+    }
+
 
     const formatarCPF = (cpfInput: string) => {
         return cpfInput
@@ -35,8 +60,16 @@ export default function RegistrarColeta() {
 
     const getUserByCPF = async () => {
         try {
-            console.log(cpf);
+            
             const response = await UsuarioService.obterPeloCPF(cpf.replace(/\D/g, ''));
+
+            if(!response) {
+                setUsuario(undefined);
+                setTipoMaterial('');
+                setQuantidade('');
+                return;
+            }
+
             setUsuario(response);
             obterItens();
         }
@@ -50,16 +83,19 @@ export default function RegistrarColeta() {
         try {
             if (user?.id) {
                 const pontoColeta = await PontoColetaService.getPontoColeta(user?.id)
-                const response = await MaterialColetaService.obterMateriais(pontoColeta.id);
+                if (pontoColeta) {
+                    const response = await MaterialColetaService.obterMateriais(pontoColeta.id);
 
-                const formattedData: MaterialItem[] = response.map((material: any) => ({
-                    id: material.id.toString(),
-                    tipo: material.tipoMaterial,
-                    medida: material.medida,
-                    preco: `R$ ${material.preco.toFixed(2)}`,
-                }));
+                    const formattedData: MaterialItem[] = response.map((material: any) => ({
+                        id: material.id.toString(),
+                        tipo: material.tipoMaterial,
+                        medida: material.medida,
+                        preco: `R$ ${material.preco.toFixed(2)}`,
+                    }));
 
-                setItems(formattedData);
+                    setItems(formattedData);
+                }
+
             }
 
 
@@ -76,26 +112,32 @@ export default function RegistrarColeta() {
     }
 
     const RegistrarColeta = async () => {
+        if(!cpf || !tipoMaterial || !quantidade) {
+            alert("Insira todos os dados para registrar a coleta!");
+            return;
+        }
         try {
             if (user?.id) {
                 const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
-                console.log(total)
                 const cliente = await UsuarioService.obterPeloCPF(cpf.replace(/\D/g, ''));
-                const registroColeta = {
-                    idPontoColeta: pontoColeta.id,
-                    idFirebaseCliente: cliente.firebaseUid,
-                    idTipoMaterial: parseInt(tipoMaterial),
-                    CPFCliente: cliente.cpf,
-                    total: parseFloat(getTotal()),
-                    peso: parseFloat(quantidade),
-                    dataDaColeta: new Date()
-                } as RegistroColeta;
+                if (pontoColeta && cliente) {
+                    const registroColeta = {
+                        idPontoColeta: pontoColeta.id,
+                        idFirebaseCliente: cliente.firebaseUid,
+                        idTipoMaterial: parseInt(tipoMaterial),
+                        CPFCliente: cliente.cpf,
+                        total: parseFloat(getTotal()),
+                        peso: parseFloat(quantidade),
+                        dataDaColeta: new Date()
+                    } as RegistroColeta;
 
-                const response = await RegistroColetaService.criarRegistroColeta(registroColeta);
+                    const response = await RegistroColetaService.criarRegistroColeta(registroColeta);
 
-                if (response) {
-                    AddPontos();
-                    alert("Registro realizado com sucsso!");
+                    if (response) {
+                        AddPontos();
+                        resetaCampos();
+                        alert("Registro realizado com sucsso!");
+                    }
                 }
             }
         }
@@ -105,8 +147,7 @@ export default function RegistrarColeta() {
     }
 
     const AddPontos = async () => {
-        try 
-        {
+        try {
             const cliente = await UsuarioService.obterPeloCPF(cpf.replace(/\D/g, ''));
             const usuario = {
                 id: cliente.id,
@@ -121,16 +162,16 @@ export default function RegistrarColeta() {
                 fotoPath: cliente.fotoPath
             } as Usuario
 
-            if(usuario.id) {
+            if (usuario.id) {
                 console.log(usuario.id);
-                const response = await UsuarioService.atualizarUsuario(usuario.id,usuario)
+                const response = await UsuarioService.atualizarUsuario(usuario.id, usuario)
 
                 if (response) {
                     alert("+50 pontos, parabens!");
                 }
             }
 
-            
+
         }
         catch (error) {
 
@@ -139,8 +180,15 @@ export default function RegistrarColeta() {
 
     useEffect(() => {
         obterItens();
+        if (user?.id)
+            checaPontoDeColetaExistente(user.id)
     }, []);
 
+    useState(() => {
+        if (user?.id)
+            checaPontoDeColetaExistente(user.id)
+
+    })
 
     return (
         <View style={styles.container}>
@@ -161,13 +209,19 @@ export default function RegistrarColeta() {
                         if (formatarCPF.length == 11)
                             getUserByCPF();
                     }}
+                    maxLength={14}
                 />
             </View>
 
             {
-                usuario &&
-                <Text style={styles.helperText}>{usuario.nome}</Text>
+                usuario && cpf &&
+                <Text style={styles.helperText}>Cliente: {usuario.nome}</Text>
 
+            }
+
+            {
+                !usuario && cpf &&
+                <Text style={styles.helperText}>Usuario não encontrado na base de dados</Text>
             }
 
             {
@@ -280,17 +334,18 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         fontSize: 16,
-        color: '#fff',
+        color: '#558C40',
     },
     inputText: {
         flex: 1,
         fontSize: 16,
-        color: '#fff',
+        color: '#558C40',
     },
     helperText: {
-        fontSize: 14,
+        fontSize: 20,
         color: '#fff',
-        marginBottom: 10,
+        marginBottom: 40,
+        marginTop: 12,
         textAlign: 'center',
     },
     button: {

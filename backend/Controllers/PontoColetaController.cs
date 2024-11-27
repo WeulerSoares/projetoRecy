@@ -59,6 +59,20 @@ namespace AppReciclagem.Controllers
             }
         }
 
+        [HttpGet("range/{raio}/{latitude}/{longitude}")]
+        public IActionResult GetByRange(double raio, double latitude, double longitude)
+        {
+            try
+            {
+                var pontosColeta = pontoColetaRepository.GetInRange(raio, latitude, longitude);
+                return Ok(pontosColeta);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro ao cadastrar dados do ponto de coleta", details = ex.Message });
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Add(PontoColetaViewModel pontoColetaModel) 
@@ -79,7 +93,9 @@ namespace AppReciclagem.Controllers
                     pontoColetaModel.Numero,
                     pontoColetaModel.Bairro,
                     pontoColetaModel.Cidade,
-                    pontoColetaModel.Estado);
+                    pontoColetaModel.Estado,
+                    pontoColetaModel.Latitude,
+                    pontoColetaModel.Longitude);
                 
                 pontoColetaRepository.Add(pontoColeta);
 
@@ -91,15 +107,11 @@ namespace AppReciclagem.Controllers
             }
         }
 
-        [HttpPut("{idPontoColeta}")]
-        public IActionResult Update(int idPontoColeta, PontoColeta pontoColeta) 
+        [HttpPut]
+        public IActionResult Update(PontoColeta pontoColeta) 
         {
             try
             {
-                if (idPontoColeta == null || idPontoColeta != pontoColeta.Id) 
-                {
-                    return BadRequest("Dados inválidos ou ID não corresponde ao objeto fornecido."); ;
-                }
 
                 pontoColetaRepository.Update(pontoColeta);
                 return Ok("Ponto de coleta atualizado com sucesso!");

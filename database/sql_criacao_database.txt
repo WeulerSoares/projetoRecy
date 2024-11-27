@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS cupons (
 );
 
 CREATE TABLE IF NOT EXISTS pontos_coleta (
-	id_ponto_coleta INT AUTO_INCREMENT PRIMARY KEY,
+    id_ponto_coleta INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT UNIQUE,
     cnpj CHAR(14) UNIQUE,
     nome VARCHAR(255),
@@ -49,6 +49,8 @@ CREATE TABLE IF NOT EXISTS pontos_coleta (
     cidade VARCHAR(255),
     estado VARCHAR(255),
     foto_path VARCHAR(255),
+    latitude DOUBLE,
+    longitude DOUBLE,
     
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
