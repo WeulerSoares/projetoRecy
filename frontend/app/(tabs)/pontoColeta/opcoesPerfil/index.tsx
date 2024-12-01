@@ -4,7 +4,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import LogoutButton from '@/components/logoutButton';
 import { useUser } from '@/components/UserContext';
 import * as ImagePicker from 'react-native-image-picker';
-import { UsuarioService } from '../services/usuarioService';
+import { Link } from 'expo-router';
+import { UsuarioService } from '../../services/usuarioService';
 
 export default function CadastroCupom() {
   const user = useUser();
@@ -57,7 +58,11 @@ export default function CadastroCupom() {
         </TouchableOpacity>
         <Text style={styles.nomeUsuario}>{user?.nome}</Text>
       </View>
-
+      
+      <TouchableOpacity style={styles.button}>
+        <Link href={{ pathname: '/pontoColeta/opcoesPerfil/profile' }} style={styles.buttonText}> CADASTRO</Link>
+      </TouchableOpacity>
+      
       <LogoutButton />
     </View>
   );
@@ -102,5 +107,18 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
+  },
+  button: {
+    backgroundColor: '#559555',
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 15,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

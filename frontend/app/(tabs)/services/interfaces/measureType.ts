@@ -4,7 +4,4 @@ const measureTypes = {
     unidade: 'Informe quantas unidades',
 };
 
-
-
-
 export default measureTypes;

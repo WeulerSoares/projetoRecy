@@ -26,7 +26,7 @@ namespace AppReciclagem.Controllers
             {
                 var registro = new RegistroColeta(
                     registroColetaViewModel.IdPontoColeta,
-                    registroColetaViewModel.IdFirebaseCliente,
+                    registroColetaViewModel.IdUsuario,
                     registroColetaViewModel.IdTipoMaterial,
                     registroColetaViewModel.CPFCliente,
                     registroColetaViewModel.Total,
@@ -44,6 +44,12 @@ namespace AppReciclagem.Controllers
             }
         }
 
+        [HttpGet("usuario/{idUsuario}")]
+        public IActionResult ObterRegistrosPorUsuario(int idUsuario)
+        {
+            var registros = registroColetaRepository.ObterRegistrosPorUsuario(idUsuario);
 
+            return Ok(registros);
+        }
     }
 }

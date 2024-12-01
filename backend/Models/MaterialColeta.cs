@@ -10,7 +10,7 @@ namespace AppReciclagem.Models
             int idPontoColeta,
             string tipoMaterial,
             string medida,
-            double preco) 
+            decimal preco) 
         {
             this.IdPontoColeta = idPontoColeta;
             this.TipoMaterial = tipoMaterial;
@@ -32,6 +32,6 @@ namespace AppReciclagem.Models
         public string Medida { get; set; }
 
         [Column("preco")]
-        public double Preco { get; set; }
+        public decimal Preco { get; set; }
     }
 }

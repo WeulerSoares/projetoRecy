@@ -1,6 +1,6 @@
 export interface RegistroColeta {
     idPontoColeta: number,
-    idFirebaseCliente: string,
+    idUsuario: number,
     idTipoMaterial: number,
     CPFCliente: string,
     total: number,

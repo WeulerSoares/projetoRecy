@@ -6,7 +6,7 @@
 
         public string TipoMaterial {  get; set; }
 
-        public double Preco { get; set; }
+        public decimal Preco { get; set; }
 
         public string Medida { get; set; }
     }

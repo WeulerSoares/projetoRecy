@@ -4,6 +4,8 @@
     {
         void Add(RegistroColeta registroColeta);
 
-        List<RegistroColeta> GetAll(int idPontoColeta);
+        List<DadosRegistroColeta> GetAll(int idPontoColeta);
+
+        List<DadosRegistroColeta> ObterRegistrosPorUsuario(int idUsuario);
     }
 }

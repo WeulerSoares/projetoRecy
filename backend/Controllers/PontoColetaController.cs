@@ -112,7 +112,7 @@ namespace AppReciclagem.Controllers
         {
             try
             {
-
+                pontoColeta.Cep = Regex.Replace(pontoColeta.Cep, "[^0-9]", "");
                 pontoColetaRepository.Update(pontoColeta);
                 return Ok("Ponto de coleta atualizado com sucesso!");
             }

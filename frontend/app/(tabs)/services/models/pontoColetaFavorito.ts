@@ -3,4 +3,5 @@ export interface PontoColetaFavorito {
     nomePontoColeta: string;
     favoritado: boolean;
     avaliacao?: number;
+    foto: string | null;
   }

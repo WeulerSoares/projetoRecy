@@ -8,7 +8,7 @@ namespace AppReciclagem.Models
     {
         public RegistroColeta(
             int idPontoColeta,
-            string idFirebaseCliente,
+            int idUsuario,
             int idTipoMaterial,
             string cpfCliente,
             double total,
@@ -16,7 +16,7 @@ namespace AppReciclagem.Models
             DateTime dataColeta) 
         {
             this.IdPontoColeta = idPontoColeta;
-            this.IdFirebaseCliente = idFirebaseCliente;
+            this.IdUsuario = idUsuario;
             this.IdTipoMaterial = idTipoMaterial;
             this.CpfCliente = cpfCliente;
             this.Total = total;
@@ -31,8 +31,8 @@ namespace AppReciclagem.Models
         [Column("id_ponto_coleta")]
         public int IdPontoColeta { get; set; }
 
-        [Column("id_firebase_cliente")]
-        public string IdFirebaseCliente { get; set; }
+        [Column("id_usuario")]
+        public int IdUsuario { get; set; }
 
         [Column("id_material_coleta")]
         public int IdTipoMaterial { get; set; }

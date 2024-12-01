@@ -19,7 +19,7 @@ namespace AppReciclagem.Infraestrutura
 
         public DbSet<MaterialColeta> MaterialColeta { get; set; }
 
-        public DbSet<RegistroColeta> RegistroColeta { get; set; }
+        public DbSet<RegistroColeta> RegistrosColeta { get; set; }
 
         public DbSet<AvaliacaoPontoColeta> AvaliacoesPontosColeta { get; set; }
 

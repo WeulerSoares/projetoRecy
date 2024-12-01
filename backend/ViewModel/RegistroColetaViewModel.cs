@@ -4,7 +4,7 @@
     {
         public int IdPontoColeta {  get; set; }
 
-        public string IdFirebaseCliente { get; set; }
+        public int IdUsuario { get; set; }
 
         public int IdTipoMaterial { get; set; }
 

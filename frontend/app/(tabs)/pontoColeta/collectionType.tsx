@@ -9,13 +9,12 @@ import {
     FlatList,
 } from 'react-native';
 import { MaterialColeta } from '../services/models/materialColeta';
-import { toFloat } from 'validator';
 import { MaterialColetaService } from '../services/materialColetaService';
 import { useUser } from '@/components/UserContext';
 import { Picker } from '@react-native-picker/picker';
 import { PontoColetaService } from '../services/pontoColetaService';
-import materialLabels from '../services/interfaces/materialLabels';
 import { MaterialItem } from '../services/interfaces/materialItem';
+import { TipoMaterial } from '../services/enums/tipoMaterial';
 
 export default function TipoMaterialRecolhido() {
 
@@ -47,7 +46,7 @@ export default function TipoMaterialRecolhido() {
                         idPontoColeta: pontoColeta.id,
                         medida: medida,
                         tipoMaterial: tipoMaterial,
-                        preco: toFloat(preco)
+                        preco: Number(preco)
                     } as MaterialColeta;
 
                     const response = await MaterialColetaService.addMaterialColeta(materialColeta);
@@ -84,7 +83,7 @@ export default function TipoMaterialRecolhido() {
                         idPontoColeta: pontoColeta.id,
                         tipoMaterial: selectedItem.tipo,
                         medida: selectedItem.medida,
-                        preco: toFloat(precoFormatado)
+                        preco: Number(precoFormatado)
                     } as MaterialColeta
 
                     const response = await MaterialColetaService.atualizarMaterial(selectedItem.id, materialColeta);
@@ -165,7 +164,7 @@ export default function TipoMaterialRecolhido() {
     }, []);
 
     const renderItem = ({ item }: { item: MaterialItem }) => {
-        const label = materialLabels[item.tipo as keyof typeof materialLabels] || item.tipo;
+        const label = TipoMaterial[item.tipo as keyof typeof TipoMaterial] || item.tipo;
         return (
             <TouchableOpacity
                 style={styles.card}
@@ -266,22 +265,20 @@ export default function TipoMaterialRecolhido() {
             >
                 <View style={styles.modalContainer}>
                     <Text style={styles.modalTitle}>Adicionar Material</Text>
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            style={styles.picker}
-                            selectedValue={tipoMaterial}
-                            onValueChange={(itemValue) => setTipoMaterial(itemValue)}
-                            dropdownIconColor="#558C40">
-                            <Picker.Item label='Selecione o tipo de material ▼' value="" />
-                            <Picker.Item label='Alumínio' value="aluminio" />
-                            <Picker.Item label='Eletrônico' value="eletronico" />
-                            <Picker.Item label='Orgânico' value="organico" />
-                            <Picker.Item label='Papel' value="papel" />
-                            <Picker.Item label='Papelão' value="papelao" />
-                            <Picker.Item label='Plástico' value="plastico" />
-                            <Picker.Item label='Vidro' value="vidro" />
-                        </Picker>
-                    </View>
+                    <Picker
+                        style={styles.input}
+                        selectedValue={tipoMaterial}
+                        onValueChange={(itemValue) => setTipoMaterial(itemValue)}
+                        dropdownIconColor="#558C40">
+                        <Picker.Item label='Selecione o tipo de material' value="" />
+                        <Picker.Item label='Alumínio' value="aluminio" />
+                        <Picker.Item label='Eletrônico' value="eletronico" />
+                        <Picker.Item label='Orgânico' value="organico" />
+                        <Picker.Item label='Papel' value="papel" />
+                        <Picker.Item label='Papelão' value="papelao" />
+                        <Picker.Item label='Plástico' value="plastico" />
+                        <Picker.Item label='Vidro' value="vidro" />
+                    </Picker>
 
                     <TextInput
                         style={styles.input}
@@ -290,18 +287,16 @@ export default function TipoMaterialRecolhido() {
                         keyboardType="numeric"
                         onChangeText={setPreco}
                     />
-                    <View style={styles.pickerContainer}>
-                        <Picker
-                            style={styles.picker}
-                            selectedValue={medida}
-                            onValueChange={(itemValue) => setMedida(itemValue)}
-                            dropdownIconColor="#558C40">
-                            <Picker.Item label='Selecione o tipo de medida ▼' value="" />
-                            <Picker.Item label='KG' value="kg" />
-                            <Picker.Item label='Volume' value="volume" />
-                            <Picker.Item label='Unidade' value="unidade" />
-                        </Picker>
-                    </View>
+                    <Picker
+                        style={styles.input}
+                        selectedValue={medida}
+                        onValueChange={(itemValue) => setMedida(itemValue)}
+                        dropdownIconColor="#558C40">
+                        <Picker.Item label='Selecione o tipo de medida' value="" />
+                        <Picker.Item label='Peso' value="peso" />
+                        <Picker.Item label='Volume' value="volume" />
+                        <Picker.Item label='Unidade' value="unidade" />
+                    </Picker>
                     <View style={styles.modalActions}>
                         <TouchableOpacity
                             style={styles.buttonAdd}
@@ -433,30 +428,4 @@ const styles = StyleSheet.create({
     setPadding: {
         marginTop: 10
     },
-    pickerWrapper: {
-        width: '100%',
-        justifyContent: 'center',
-        backgroundColor: '#8FE38F',
-        borderRadius: 25, // Borda arredondada
-        overflow: 'hidden', // Para garantir que o conteúdo fique dentro da borda arredondada
-    },
-    picker: {
-        width: '100%',
-        backgroundColor: '#fff',
-        borderColor: '#8FE38F',
-        fontSize: 16,
-        padding: 12,
-        marginBottom: 16,
-        borderRadius: 50,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    pickerContainer: {
-        width: "100%",
-        overflow: 'hidden',
-        borderRadius: 25,
-        borderBottomLeftRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
 });

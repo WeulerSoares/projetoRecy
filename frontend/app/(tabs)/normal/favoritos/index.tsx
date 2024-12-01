@@ -6,6 +6,7 @@ import { Link, useFocusEffect } from 'expo-router';
 import { UsuarioService } from '../../services/usuarioService';
 import { useUser } from '@/components/UserContext';
 import { PontoColetaFavorito } from '../../services/models/pontoColetaFavorito';
+import { PontoColetaService } from '../../services/pontoColetaService';
 
 export default function FavoritosScreen() {
   const [pontosColeta, setPontosColeta] = useState<PontoColetaFavorito[]>([]);
@@ -16,11 +17,9 @@ export default function FavoritosScreen() {
     try {
       const dados = await UsuarioService.obterPontosColetaFavoritos(user?.id!);
 
-      /*
       for (const f of dados) {
         f.foto = await PontoColetaService.obterFoto(f.idPontoColeta);
       }
-      */
 
       setPontosColeta(dados);
     } catch (error) {
@@ -43,18 +42,22 @@ export default function FavoritosScreen() {
     <View style={styles.container}>
       <ScrollView style={styles.list}>
         <Text style={styles.headerText}>Favoritos</Text>
-        {pontosColeta.map((PontoColeta) => (
-          <View key={PontoColeta.idPontoColeta} style={styles.card}>
-            <View style={styles.imagePlaceholder} />
+        {pontosColeta.map((pontoColeta) => (
+          <View key={pontoColeta.idPontoColeta} style={styles.card}>
+            <View style={styles.imagePlaceholder}>
+            {pontoColeta.foto ? (
+              <Image source={{ uri: pontoColeta.foto }} style={styles.image} />
+              ) : null}
+          </View>
             <View style={styles.info}>
-              <Text style={styles.nome}>{PontoColeta.nomePontoColeta}</Text>
+              <Text style={styles.nome}>{pontoColeta.nomePontoColeta}</Text>
               <View style={styles.actions}>
                 <TouchableOpacity style={styles.button}>
-                  <Link href={{ pathname: '/normal/favoritos/perfilPontoColeta', params: { id: PontoColeta.idPontoColeta }}} style={styles.buttonText}> Ver Perfil</Link>
+                  <Link href={{ pathname: '/normal/favoritos/perfilPontoColeta', params: { id: pontoColeta.idPontoColeta }}} style={styles.buttonText}> Ver Perfil</Link>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => toggleFavorito(PontoColeta.idPontoColeta)}>
+                <TouchableOpacity onPress={() => toggleFavorito(pontoColeta.idPontoColeta)}>
                     <MaterialCommunityIcons
-                        name={PontoColeta.favoritado ? "heart" : "heart-outline"}
+                        name={pontoColeta.favoritado ? "heart" : "heart-outline"}
                         size={30}
                         color={"#559555"}
                         style={styles.iconeFavorito}
@@ -63,13 +66,13 @@ export default function FavoritosScreen() {
               </View>
               <View style={styles.rating}>
                 <StarRating
-                    rating={PontoColeta.avaliacao || 0}
+                    rating={pontoColeta.avaliacao || 0}
                     onChange={() => {}}
                     enableHalfStar
                     starSize={22}
                     style={styles.starRating}
                 />
-                <Text style={styles.ratingText}>{PontoColeta.avaliacao ? PontoColeta.avaliacao.toFixed(1) : 0}</Text>
+                <Text style={styles.ratingText}>{pontoColeta.avaliacao ? pontoColeta.avaliacao.toFixed(1) : 0}</Text>
               </View>
             </View>
           </View>
@@ -162,5 +165,10 @@ const styles = StyleSheet.create({
       },
       starRating: {
         marginTop: 4,
+      },
+      image: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 10,
       },
 });

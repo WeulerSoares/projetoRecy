@@ -7,13 +7,12 @@ import { Usuario } from '../services/models/usuario';
 import { MaterialColetaService } from '../services/materialColetaService';
 import { useUser } from '@/components/UserContext';
 import { PontoColetaService } from '../services/pontoColetaService';
-import materialLabels from '../services/interfaces/materialLabels';
 import measureTypes from '../services/interfaces/measureType';
 import { MaterialItem } from '../services/interfaces/materialItem';
 import { RegistroColeta } from '../services/models/registroColeta';
 import { RegistroColetaService } from '../services/registroColetaService';
 import { useRouter } from "expo-router";
-
+import { TipoMaterial } from '../services/enums/tipoMaterial';
 
 export default function RegistrarColeta() {
     const [tipoMaterial, setTipoMaterial] = useState('');
@@ -34,7 +33,7 @@ export default function RegistrarColeta() {
                 return;
             }
 
-            router.replace("/(tabs)/pontoColeta/profile");
+            router.replace("/(tabs)/pontoColeta/opcoesPerfil/profile");
             alert("É necessário que atualize suas informações para poder seguir com as funcionalidades!");
 
         } catch (error) {
@@ -119,13 +118,13 @@ export default function RegistrarColeta() {
         try {
             if (user?.id) {
                 const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
-                const cliente = await UsuarioService.obterPeloCPF(cpf.replace(/\D/g, ''));
-                if (pontoColeta && cliente) {
+                const usuario = await UsuarioService.obterPeloCPF(cpf.replace(/\D/g, ''));
+                if (pontoColeta && usuario) {
                     const registroColeta = {
                         idPontoColeta: pontoColeta.id,
-                        idFirebaseCliente: cliente.firebaseUid,
+                        idUsuario: usuario.id,
                         idTipoMaterial: parseInt(tipoMaterial),
-                        CPFCliente: cliente.cpf,
+                        CPFCliente: usuario.cpf,
                         total: parseFloat(getTotal()),
                         peso: parseFloat(quantidade),
                         dataDaColeta: new Date()
@@ -150,16 +149,16 @@ export default function RegistrarColeta() {
         try {
             const cliente = await UsuarioService.obterPeloCPF(cpf.replace(/\D/g, ''));
             const usuario = {
-                id: cliente.id,
-                firebaseUid: cliente.firebaseUid,
-                nome: cliente.nome,
-                email: cliente.email,
-                dataNascimento: cliente.dataNascimento,
-                pontosAcumulados: (cliente.pontosAcumulados + 50),
-                tipoUsuario: cliente.tipoUsuario,
-                cpf: cliente.cpf,
-                cnpj: cliente.cnpj,
-                fotoPath: cliente.fotoPath
+                id: cliente!?.id,
+                firebaseUid: cliente!.firebaseUid,
+                nome: cliente!.nome,
+                email: cliente!.email,
+                dataNascimento: cliente!.dataNascimento,
+                pontosAcumulados: (cliente!.pontosAcumulados + 50),
+                tipoUsuario: cliente!.tipoUsuario,
+                cpf: cliente!.cpf,
+                cnpj: cliente!.cnpj,
+                fotoPath: cliente!.fotoPath
             } as Usuario
 
             if (usuario.id) {
@@ -197,7 +196,7 @@ export default function RegistrarColeta() {
                 <FontAwesome5 name="id-card" size={18} color="#558C40" style={styles.icon} />
                 <TextInput
                     style={styles.input}
-                    placeholder="Digite o CPF do reciclador"
+                    placeholder="Informe o CPF do reciclador"
                     placeholderTextColor="#558C40"
                     value={cpf}
                     onChangeText={(text) => {
@@ -249,16 +248,16 @@ export default function RegistrarColeta() {
                                 }}
                                 style={styles.picker}
                                 dropdownIconColor="#558C40" // Ícone do dropdown
-                                placeholder="Selecione o tipo de material ▼"
+                                placeholder="Selecione o tipo de material"
                             >
                                 {
                                     !tipoMaterial &&
-                                    <Picker.Item label="Selecione o tipo de material ▼" value="" />
+                                    <Picker.Item label="Selecione o tipo de material" value="" />
                                 }
                                 {items.map((item) => (
                                     <Picker.Item
                                         key={item.id}
-                                        label={`${materialLabels[item.tipo as keyof typeof materialLabels] || item.tipo} - ${item.preco}`}
+                                        label={`${TipoMaterial[item.tipo as keyof typeof TipoMaterial] || item.tipo} - ${item.preco}`}
                                         value={item.id.toString()}
                                     />
                                 ))}
@@ -321,12 +320,13 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#8FE38F',
+        backgroundColor: '#8FFB8F',
         borderRadius: 25,
         paddingHorizontal: 16,
         paddingVertical: 12,
         marginBottom: 20,
-        width: '100%'
+        width: '100%',
+        
     },
     icon: {
         marginRight: 10,
@@ -335,6 +335,7 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
         color: '#558C40',
+        fontWeight: 'bold',
     },
     inputText: {
         flex: 1,
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     button: {
-        backgroundColor: '#4E9A51',
+        backgroundColor: '#559555',
         paddingVertical: 14,
         borderRadius: 25,
         alignItems: 'center',
@@ -364,16 +365,17 @@ const styles = StyleSheet.create({
     pickerWrapper: {
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: '#8FE38F',
+        backgroundColor: '#8FFB8F',
         borderRadius: 25, // Borda arredondada
         overflow: 'hidden', // Para garantir que o conteúdo fique dentro da borda arredondada
     },
     picker: {
         width: '100%',
         color: '#558C40',
-        backgroundColor: '#8FE38F',
-        borderColor: '#8FE38F',
+        backgroundColor: '#8FFB8F',
+        borderColor: '#8FFB8F',
         flex: 1,
         fontSize: 16,
+        fontWeight: 'bold'
     },
 });

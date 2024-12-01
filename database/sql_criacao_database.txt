@@ -1,3 +1,7 @@
+CREATE DATABASE IF NOT EXISTS app_reciclagem;
+
+USE app_reciclagem;
+
 CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     firebase_uid VARCHAR(128) NOT NULL,
@@ -38,7 +42,7 @@ CREATE TABLE IF NOT EXISTS cupons (
 );
 
 CREATE TABLE IF NOT EXISTS pontos_coleta (
-    id_ponto_coleta INT AUTO_INCREMENT PRIMARY KEY,
+	id_ponto_coleta INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT UNIQUE,
     cnpj CHAR(14) UNIQUE,
     nome VARCHAR(255),
@@ -60,14 +64,14 @@ CREATE TABLE IF NOT EXISTS material_coleta (
     id_ponto_coleta INT,
     tipo_material VARCHAR(255),
     medida VARCHAR(255),
-    preco FLOAT,
+    preco DECIMAL(10, 2),
     
     FOREIGN KEY (id_ponto_coleta) REFERENCES pontos_coleta(id_ponto_coleta)
 );
 CREATE TABLE IF NOT EXISTS registro_coleta (
 	id_registro_coleta INT AUTO_INCREMENT PRIMARY KEY,
     id_ponto_coleta INT,
-    id_firebase_cliente VARCHAR(255),
+    id_usuario INT,
     id_material_coleta INT,
     data_coleta DATE,
     cpf_cliente char(11),
@@ -75,7 +79,7 @@ CREATE TABLE IF NOT EXISTS registro_coleta (
     peso FLOAT,
     
     FOREIGN KEY (id_ponto_coleta) REFERENCES pontos_coleta(id_ponto_coleta),
-    FOREIGN KEY (id_firebase_cliente) REFERENCES usuarios(firebase_uid),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
     FOREIGN KEY (id_material_coleta) REFERENCES material_coleta(id_material_coleta)
 );
 

@@ -87,7 +87,6 @@ namespace AppReciclagem.Infraestrutura
             return pontosProximos;
         }
 
-
         public static double CalculateHaversine(double lat1, double lon1, double lat2, double lon2)
         {
             // Raio da Terra

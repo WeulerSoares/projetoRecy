@@ -64,16 +64,29 @@ const PerfilPontoColeta = () => {
   const carregarDadosPontoColeta = async () => {
     try {
       const dadosPontoColeta = await PontoColetaService.obterPerfilPontoColeta(Number(id), user?.id!);
-      setImage(await PontoColetaService.obterFoto(dadosPontoColeta.idPontoColeta));
       setPontoColeta(dadosPontoColeta);
     } catch (error) {
       console.error('Erro ao carregar dados ponto de coleta:', error);
+    }
+  };
+  
+  const carregarFotoPerfilPontoColeta = async () => {
+    try {
+      if (pontoColeta) {
+        setImage(await PontoColetaService.obterFoto(pontoColeta.idPontoColeta));
+      }
+    } catch (error) {
+      console.error('Erro ao carregar foto de peril do ponto de coleta:', error);
     }
   };
 
   useEffect(() => {
     carregarDadosPontoColeta();
   }, []);
+  
+  useEffect(() => {
+    carregarFotoPerfilPontoColeta();
+  }, [pontoColeta]);
 
   return (
     <View style={styles.container}>

@@ -1,10 +1,10 @@
 import { getCurrentPositionAsync, LocationObject, requestForegroundPermissionsAsync } from 'expo-location';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { PontoColeta } from '../services/models/pontoColeta';
 import { useUser } from '@/components/UserContext';
-import { PontoColetaService } from '../services/pontoColetaService';
 import axios from 'axios';
+import { PontoColeta } from '../../services/models/pontoColeta';
+import { PontoColetaService } from '../../services/pontoColetaService';
 
 
 
@@ -395,7 +395,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#6dc06d',
-    paddingTop: 40,
   },
   headerText: {
     fontSize: 22,
@@ -406,7 +405,7 @@ const styles = StyleSheet.create({
     paddingTop: 30
   },
   locationButton: {
-    backgroundColor: '#9fe69f',
+    backgroundColor: '#559555',
     borderRadius: 25,
     paddingVertical: 12,
     paddingHorizontal: 24,
@@ -414,7 +413,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   locationButtonText: {
-    color: '#000000',
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -451,18 +450,19 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   input: {
-    backgroundColor: '#86C386',
+    backgroundColor: '#8FFB8F',
     borderColor: '#000000',
     borderWidth: 1,
     borderRadius: 8,
     paddingVertical: 12,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: 'white',
+    color: '#558C40',
     marginBottom: 25,
+    fontWeight: 'bold'
   },
   confirmButton: {
-    backgroundColor: '#5b8a5b',
+    backgroundColor: '#559555',
     borderRadius: 25,
     paddingVertical: 12,
     alignItems: 'center',

@@ -44,15 +44,14 @@ export default function App() {
       console.log('Usuário logado com sucesso:', userCredential.user);
 
       const response = await UsuarioService.getUsuario(userCredential.user.uid);
-      router.replace('/(tabs)/normal');
       
-      // if (response.tipoUsuario === TipoUsuario.Coletor) {
-      //   router.replace('/(tabs)/normal');
-      // } else if (response.tipoUsuario === TipoUsuario.PontoColeta) {
-      //   router.replace('/(tabs)/pontoColeta');
-      // } else {
-      //   router.replace('/(tabs)/admin');
-      // }
+      if (response.tipoUsuario === TipoUsuario.Coletor) {
+        router.replace('/(tabs)/normal');
+      } else if (response.tipoUsuario === TipoUsuario.PontoColeta) {
+        router.replace('/(tabs)/pontoColeta');
+      } else {
+        router.replace('/(tabs)/admin');
+      }
 
 
 

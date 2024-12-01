@@ -1,13 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     FlatList,
 } from 'react-native';
-import { MaterialColetaService } from '../services/materialColetaService';
 import { useUser } from '@/components/UserContext';
-import { PontoColetaService } from '../services/pontoColetaService';
 import { RegistroColetaService } from '../services/registroColetaService';
 import { RegisterItem } from '../services/interfaces/registerItem';
 import { useFocusEffect } from 'expo-router';
@@ -16,16 +14,13 @@ import { TipoMaterial } from '../services/enums/tipoMaterial';
 export default function TipoMaterialRecolhido() {
 
     const [items, setItems] = useState<RegisterItem[]>([]);
-    const [tipoMateriais, setTipoMateriais] = useState<{ [key: number]: string }>({});
     const user = useUser();
     const groupedItems = groupByDate(items);
 
     const obterRegistros = async () => {
         try {
             if (user?.id) {
-                const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
-                const response = await RegistroColetaService.obterRegistrosPontoColeta(pontoColeta!.id);
-                let teste;
+                const response = await RegistroColetaService.obterRegistrosUsuario(user?.id);
 
                 const formattedData: RegisterItem[] = response.map((register: any) => ({
                     idRegistroColeta: register.idRegistroColeta,
@@ -39,35 +34,12 @@ export default function TipoMaterialRecolhido() {
                 }));
 
                 setItems(formattedData);
-                // getTypeMaterial(formattedData[0].idTipoMaterial)
             }
 
         } catch (error) {
 
         }
     }
-
-    async function getTypeMaterial(idTipoMaterial: number) {
-        if (tipoMateriais[idTipoMaterial]) {
-            return; // Evita buscar se já existe no estado
-        }
-
-        try {
-            const response = await MaterialColetaService.obterMaterial(idTipoMaterial);
-            setTipoMateriais((prev) => ({
-                ...prev,
-                [idTipoMaterial]: response.tipoMaterial, // Atualiza o mapeamento
-            }));
-        } catch (error) {
-            console.error(`Erro ao obter tipo de material para ID ${idTipoMaterial}:`, error);
-        }
-    }
-
-    useFocusEffect(
-        useCallback(() => {
-            obterRegistros();
-        }, [])
-    );
 
     function formatDate(date: string): string {
         try {
@@ -133,9 +105,15 @@ export default function TipoMaterialRecolhido() {
         }, {} as { [key: string]: RegisterItem[] });
     }
 
+    useFocusEffect(
+        useCallback(() => {
+            obterRegistros();
+        }, [])
+    );
+
     return (
         <View style={styles.container}>
-        <Text style={styles.header}>Registros - {user?.nome}</Text>
+        <Text style={styles.header}>Registros</Text>
         <FlatList
             data={Object.keys(groupedItems)}
             renderItem={({ item: date }) => (
@@ -144,7 +122,7 @@ export default function TipoMaterialRecolhido() {
                     {groupedItems[date].map((item) => (
                         <View style={styles.card} key={item.idRegistroColeta}>
                             <Text style={styles.cardTitle}>{item.tipoMaterial}</Text>
-                            <Text style={styles.cardPrice}><b>CPF:</b> {formatCPF(item.cpfCliente)}</Text>
+                            <Text style={styles.cardPrice}><b>Ponto de coleta:</b> {formatCPF(item.nomePontoColeta)}</Text>
                             <Text style={styles.cardPrice}><b>{obterTipoMedidaFormatado(item.tipoMedida)}:</b> {obterMedidaFormatado(Number(item.peso), item.tipoMedida)}</Text>
                             <Text style={styles.cardPrice}><b>Total:</b> {formatCurrency(Number(item.total))}</Text>
                         </View>
