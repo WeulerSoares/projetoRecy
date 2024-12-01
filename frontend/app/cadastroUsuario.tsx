@@ -9,6 +9,7 @@ import { Usuario } from './(tabs)/services/models/usuario';
 import { FirebaseError } from 'firebase/app';
 import { useRouter } from 'expo-router';
 import { TipoUsuario } from './(tabs)/services/enums/tipoUsuario';
+import Alert from '@/components/Alert';
 
 interface CustomRadioButtonProps {
   label: string;
@@ -53,20 +54,24 @@ export default function App() {
   const [cpfValido, setCpfValido] = useState(true);
   const [cnpjValido, setCnpjValido] = useState(true);
   const [emailError, setEmailError] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const router = useRouter();
 
-  // Função para validar CPF
   const validarCPF = (cpfInput: string) => {
-    if (cpfInput.length > 0) {
-      setCpfValido(cpf.isValid(cpfInput)); // Atualiza o estado de CPF válido
+    setCpfValido(true);
+
+    if (cpfInput) {
+      setCpfValido(cpf.isValid(cpfInput));
     }
   };
 
-  // Função para validar CNPJ
   const validarCNPJ = (cnpjInput: string) => {
+    setCnpjValido(true);
+
     if (cnpjInput) {
-      setCnpjValido(cnpj.isValid(cnpjInput)); // Atualiza o estado de CNPJ válido
+      setCnpjValido(cnpj.isValid(cnpjInput));
     }
   };
 
@@ -88,19 +93,15 @@ export default function App() {
       .replace(/(\d{4})(\d{1,2})$/, '$1-$2'); // Coloca hífen
   };
 
-  const validateEmail = () => {
-    if (email.length === 0 || validator.isEmail(email)) {
+  const validateEmail = (emailInput: string) => {
+    setEmailError('');
+
+    if (emailInput.length === 0 || validator.isEmail(emailInput)) {
       setEmailError('');
     } else {
       setEmailError('E-mail inválido');
     }
   };
-
-  const removerMensagemEmailInvalidoCasoEstejaSemValor = (emailInput: string) => {
-    if (emailInput.length === 0) {
-      setEmailError('');
-    }
-  }
 
   const removerMensagemCpfInvalidoCasoEstejaSemValor = (cpfInput: string) => {
     if (cpfInput.length === 0) {
@@ -116,22 +117,26 @@ export default function App() {
 
   const cadastrarUsuario = async () => {
     if (!nome || (tipoUsuario === TipoUsuario.Coletor && !cpf) || (tipoUsuario === TipoUsuario.PontoColeta && !cnpj) || !email || !senha) {
-      alert("Por favor, preencha todos os campos.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha todos os campos.');
       return;
     }
 
     if (tipoUsuario === TipoUsuario.Coletor && !cpfValido) {
-      alert("Por favor, preencha um CPF válido.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha um CPF válido.');
       return;
     }
     
     if (tipoUsuario === TipoUsuario.PontoColeta && !cnpjValido) {
-      alert("Por favor, preencha um CNPJ válido.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha um CNPJ válido.');
       return;
     }
     
     if (emailError) {
-      alert("Por favor, preencha um e-mail válido.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha um e-mail válido.');
       return;
     }
 
@@ -154,7 +159,8 @@ export default function App() {
       const response = await UsuarioService.criarUsuario(usuario);
       
       if (response) {
-        alert(response.message);
+        setShowAlert(true);
+        setAlertMessage(response.message);
         router.replace('/login');
       } else {
         console.error('Erro ao cadastrar usuário', response);
@@ -169,16 +175,20 @@ export default function App() {
 
         switch (error.code) {
           case 'auth/email-already-in-use':
-            alert("O e-mail já está em uso.");
+            setShowAlert(true);
+            setAlertMessage('O e-mail já está em uso.');
             break;
           case 'auth/invalid-email':
-            alert("E-mail inválido.");
+            setShowAlert(true);
+            setAlertMessage('E-mail inválido.');
             break;
           case 'auth/weak-password':
-            alert("A senha é muito fraca.");
+            setShowAlert(true);
+            setAlertMessage('A senha é muito fraca.');
             break;
           default:
-            alert("Erro de autenticação. Tente novamente.");
+            setShowAlert(true);
+            setAlertMessage('Erro de autenticação. Tente novamente.');
             console.error("Erro ao cadastrar o usuário:", error.message);
         }
       } else {
@@ -187,7 +197,8 @@ export default function App() {
         }
         
         console.error("Erro ao cadastrar o usuário:", error);
-        alert("Erro de conexão. Tente novamente mais tarde.");
+        setShowAlert(true);
+        setAlertMessage('Erro de conexão. Tente novamente mais tarde.');
       }
     }
   };
@@ -238,9 +249,6 @@ export default function App() {
             validarCNPJ(textoFormatado);
             removerMensagemCnpjInvalidoCasoEstejaSemValor(textoFormatado);
           }}
-          onBlur={() => {
-            validarCNPJ(cnpjInput);
-          }}
           keyboardType="numeric"
           maxLength={18}
           style={styles.input}
@@ -257,10 +265,8 @@ export default function App() {
           onChangeText={(text) => {
             const textoFormatado = formatarCPF(text);
             setCpfInput(textoFormatado);
+            validarCPF(textoFormatado);
             removerMensagemCpfInvalidoCasoEstejaSemValor(textoFormatado);
-          }}
-          onBlur={() => {
-            validarCPF(cpfInput);
           }}
           keyboardType="numeric"
           maxLength={14}
@@ -277,9 +283,8 @@ export default function App() {
           value={email}
           onChangeText={(text) => {
             setEmail(text);
-            removerMensagemEmailInvalidoCasoEstejaSemValor(text);
+            validateEmail(text);
           }}
-          onBlur={validateEmail}
           keyboardType="email-address"
           style={styles.input}
         />
@@ -307,6 +312,13 @@ export default function App() {
           Já possui uma conta? <Text style={{ fontWeight: 'bold' }}>Faça Login</Text>
         </Text>
       </TouchableOpacity>
+
+      {showAlert && (
+        <Alert
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </View>
   );
 }

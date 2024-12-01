@@ -7,11 +7,15 @@
 // import { useEffect, useState, useRef } from "react";
 // import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 // import axios from 'axios';
+// import Alert from "@/components/Alert"
 
 // export default function MapTest() {
 
 //     const mapRef = useRef<MapView>(null)
 
+//     const [showAlert, setShowAlert] = useState(false);
+//     const [alertMessage, setAlertMessage] = useState('');
+    
 //     const [location, setLocation] = useState<LocationObject | null>(null);
 //     const [address, setAddress] = useState<string | null>(null);
 
@@ -91,7 +95,8 @@
 
 //     const reverseGeoCode = async () => {
 //         if (!location) {
-//             alert('Localização não encontrada.');
+//             setShowAlert(true);
+//             setAlertMessage('Localização não encontrada.');
 //             return;
 //         }
 
@@ -185,6 +190,13 @@
 //                 value={estado}
 //                 onChangeText={setEstado}
 //             ></TextInput>
+
+//             {showAlert && (
+//                 <Alert
+//                     message={alertMessage}
+//                     onClose={() => setShowAlert(false)}
+//                 />
+//             )}
 //         </View>
 //     )
 // }

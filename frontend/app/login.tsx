@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Button } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import validator from 'validator';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
@@ -7,33 +7,33 @@ import { FirebaseError } from 'firebase/app';
 import { useRouter } from 'expo-router';
 import { UsuarioService } from './(tabs)/services/usuarioService';
 import { TipoUsuario } from './(tabs)/services/enums/tipoUsuario';
+import Alert from '@/components/Alert';
 
 export default function App() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
   const [emailError, setEmailError] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
   const router = useRouter();
 
-  const validateEmail = () => {
-    if (email.length === 0 || validator.isEmail(email)) {
+  const validateEmail = (emailInput: string) => {
+    setEmailError('');
+
+    if (emailInput.length === 0 || validator.isEmail(emailInput)) {
       setEmailError('');
     } else {
       setEmailError('E-mail inválido');
     }
   };
 
-  const removerMensagemEmailInvalidoCasoEstejaSemValor = (emailInput: string) => {
-    if (emailInput.length === 0) {
-      setEmailError('');
-    }
-  }
-
   // Função para cadastrar o usuário
   const logarUsuario = async () => {
     // Verifique se todos os campos estão preenchidos e válidos
     if (!email || !senha) {
-      alert("Por favor, preencha todos os campos.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha todos os campos.');
       return;
     }
     
@@ -57,26 +57,31 @@ export default function App() {
 
     } catch (error) {
       if (error instanceof FirebaseError) {
-        // Verifica o código de erro específico do Firebase
         switch (error.code) {
           case 'auth/invalid-email':
-            alert("E-mail inválido.");
+            setShowAlert(true);
+            setAlertMessage('E-mail inválido.');
             break;
           case 'auth/user-not-found':
-            alert("Usuário não encontrado.");
+            setShowAlert(true);
+            setAlertMessage('Usuário não encontrado.');
             break;
           case 'auth/wrong-password':
-            alert("Senha incorreta.");
+            setShowAlert(true);
+            setAlertMessage('Senha incorreta.');
             break;
           case 'auth/invalid-credential':
-            alert("Usuário não encontrado.");
+            setShowAlert(true);
+            setAlertMessage('Usuário não encontrado.');
             break;
           default:
-            alert("Não foi possível fazer o login. Tente novamente.");
+            setShowAlert(true);
+            setAlertMessage('Não foi possível fazer o login. Tente novamente.');
         }
       } else {
         console.error("Erro ao logar com usuário:", error);
-        alert("Erro de conexão. Tente novamente mais tarde.");
+        setShowAlert(true);
+        setAlertMessage('Erro de conexão. Tente novamente mais tarde.');
       }
     }
   };
@@ -87,16 +92,15 @@ export default function App() {
       source={require("../assets/images/lixo_dinheiro.png")} 
       style={styles.logo} />
 
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, emailError.length > 0 && styles.invalidInput]}>
         <MaterialCommunityIcons name="email" size={24} style={styles.icon} />
         <TextInput
           placeholder="Digite seu e-mail"
           value={email}
           onChangeText={(text) => {
             setEmail(text);
-            removerMensagemEmailInvalidoCasoEstejaSemValor(text);
+            validateEmail(text);
           }}
-          onBlur={validateEmail}
           keyboardType="email-address"
           style={styles.input}
         />
@@ -124,6 +128,13 @@ export default function App() {
           Ainda não possui uma conta? <Text style={{ fontWeight: 'bold' }}>Cadastre-se</Text>
         </Text>
       </TouchableOpacity>
+      
+      {showAlert && (
+        <Alert
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </View>
   );
 }

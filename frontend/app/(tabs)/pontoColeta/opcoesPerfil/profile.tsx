@@ -5,11 +5,11 @@ import { useUser } from '@/components/UserContext';
 import axios from 'axios';
 import { PontoColeta } from '../../services/models/pontoColeta';
 import { PontoColetaService } from '../../services/pontoColetaService';
-
-
+import Alert from '@/components/Alert';
 
 export default function UpdateAddressScreen() {
-
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [pontoColeta, setPontoColeta] = useState<PontoColeta | null>(null);
   const [cep, setCep] = useState('');
@@ -116,7 +116,8 @@ export default function UpdateAddressScreen() {
 
   const getAdress = async () => {
     if (!location) {
-      alert('Localização não encontrada.');
+      setShowAlert(true);
+      setAlertMessage('Localização não encontrada.');
       return;
     }
 
@@ -185,7 +186,8 @@ export default function UpdateAddressScreen() {
       !cidade ||
       !estado ||
       !numero) {
-      alert("Por favor, preencha todos os campos.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha todos os campos.');
       return;
     }
 
@@ -207,7 +209,8 @@ export default function UpdateAddressScreen() {
       const response = await PontoColetaService.updatePontoColeta(pontoColetaData);
 
       if (response) {
-        alert('Endereço Ponto Coleta cadastrado com sucesso!');
+        setShowAlert(true);
+        setAlertMessage('Endereço Ponto Coleta cadastrado com sucesso!');
         setLatitude('');
         setLatitude('');
         requestLocationPermissions();
@@ -229,7 +232,8 @@ export default function UpdateAddressScreen() {
       !cidade ||
       !estado ||
       !numero) {
-      alert("Por favor, preencha todos os campos.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha todos os campos.');
       return;
     }
 
@@ -251,7 +255,8 @@ export default function UpdateAddressScreen() {
       const response = await PontoColetaService.createPontoColeta(pontoColetaData);
 
       if (response) {
-        alert('Endereço Ponto Coleta atualizado com sucesso!');
+        setShowAlert(true);
+        setAlertMessage('Endereço Ponto Coleta atualizado com sucesso!');
         setLatitude('');
         setLatitude('');
         requestLocationPermissions();
@@ -294,7 +299,8 @@ export default function UpdateAddressScreen() {
         setLatitude(lat);
         setLongitude(lon);
       } else {
-        alert("Não foi possível encontrar as coordenadas para este endereço.");
+        setShowAlert(true);
+        setAlertMessage('Não foi possível encontrar as coordenadas para este endereço.');
       }
 
 
@@ -343,7 +349,6 @@ export default function UpdateAddressScreen() {
 
         <TextInput style={styles.input}
           placeholder="CEP"
-          placeholderTextColor="#E2E2E2"
           keyboardType="numeric"
           value={formatCEP(cep)}
           onChangeText={(value) => {
@@ -356,30 +361,25 @@ export default function UpdateAddressScreen() {
         />
         <TextInput style={styles.input}
           placeholder="Rua"
-          placeholderTextColor="#E2E2E2"
           value={rua}
           onChangeText={setRua}
         />
         <TextInput style={styles.input}
           placeholder="Número"
-          placeholderTextColor="#E2E2E2"
           keyboardType="numeric"
           value={numero}
           onChangeText={setnNumero}
           maxLength={5} />
         <TextInput style={styles.input}
           placeholder="Bairro"
-          placeholderTextColor="#E2E2E2"
           value={bairro}
           onChangeText={setBairro} />
         <TextInput style={styles.input}
           placeholder="Cidade"
-          placeholderTextColor="#E2E2E2"
           value={cidade}
           onChangeText={setCidade} />
         <TextInput style={styles.input}
           placeholder="Estado"
-          placeholderTextColor="#E2E2E2"
           value={estado}
           onChangeText={setEstado} />
 
@@ -387,6 +387,13 @@ export default function UpdateAddressScreen() {
           <Text style={styles.confirmButtonText}>CONFIRMAR</Text>
         </TouchableOpacity>
       </ScrollView>
+      
+      {showAlert && (
+        <Alert
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </KeyboardAvoidingView>
   );
 }

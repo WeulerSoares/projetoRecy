@@ -5,11 +5,14 @@ import { CupomVisualizacao } from "../services/models/cupomVisualizacao";
 import { EmpresaParceiraService } from "../services/empresaParceiraService";
 import { useUser } from '@/components/UserContext';
 import { UsuarioService } from "../services/usuarioService";
+import Alert from "@/components/Alert";
 
 export default function CuponsScreen() {
   const [cupons, setCupons] = useState<CupomVisualizacao[]>([]);
   const [pontosAcumulados, setPontosAcumulados] = useState<Number>(0);
-  
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
   const user = useUser();
 
   const carregarCupons = async () => {
@@ -52,7 +55,8 @@ export default function CuponsScreen() {
       const response = await CupomService.resgatarCupom(user?.id!, idCupom);
       
       if (response) {
-        alert(response.message);
+        setShowAlert(true);
+        setAlertMessage(response.message);
         carregarPontosAcumulados();
         carregarCupons();
       }
@@ -60,9 +64,11 @@ export default function CuponsScreen() {
       console.error("Erro ao resgatar cupom:", error);
 
       if (error.response && error.response.data && error.response.data.message) {
-          alert(error.response.data.message);
+        setShowAlert(true);
+        setAlertMessage(error.response.data.message);
       } else {
-          alert('Erro inesperado ao resgatar cupom');
+        setShowAlert(true);
+        setAlertMessage('Erro inesperado ao resgatar cupom');
       }
     }
   };
@@ -92,6 +98,13 @@ export default function CuponsScreen() {
           </View>
         ))}
       </ScrollView>
+
+      {showAlert && (
+        <Alert
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </View>
   );
 }

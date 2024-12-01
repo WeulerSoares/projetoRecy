@@ -6,13 +6,15 @@ import validator from 'validator';
 import * as ImagePicker from 'react-native-image-picker';
 import { EmpresaParceira } from '../services/models/empresaParceira';
 import { EmpresaParceiraService } from '../services/empresaParceiraService';
+import Alert from '@/components/Alert';
 
 export default function CadastroEmpresa() {
   const [nome, setNome] = useState('');
   const [cnpjInput, setCnpjInput] = useState('');
   const [email, setEmail] = useState('');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
   const [cnpjValido, setCnpjValido] = useState(true);
   const [emailError, setEmailError] = useState('');
 
@@ -47,7 +49,7 @@ export default function CadastroEmpresa() {
     try {
       const result = await ImagePicker.launchImageLibrary({
         mediaType: 'photo',
-        quality: 1, // Qualidade da imagem
+        quality: 1,
       });
 
       if (result.assets && result.assets.length > 0) {
@@ -55,28 +57,33 @@ export default function CadastroEmpresa() {
         setSelectedImage(uri!);
       }
     } catch (error) {
-      alert('Não foi possível selecionar a imagem.');
+      setShowAlert(true);
+      setAlertMessage('Não foi possível selecionar a imagem.');
     }
   };
 
   const cadastrarEmpresaParceira = async () => {
     if (!nome || !cnpj || !email) {
-      alert("Por favor, preencha todos os campos.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha todos os campos.');
       return;
     }
     
     if (!cnpjValido) {
-      alert("Por favor, preencha um CNPJ válido.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha um CNPJ válido.');
       return;
     }
     
     if (emailError) {
-      alert("Por favor, preencha um e-mail válido.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha um e-mail válido.');
       return;
     }
 
     if (!selectedImage) {
-      alert("Por favor, Selecione uma foto");
+      setShowAlert(true);
+      setAlertMessage('Por favor, Selecione uma foto');
       return;
     }
 
@@ -91,15 +98,18 @@ export default function CadastroEmpresa() {
       const response = await EmpresaParceiraService.criarEmpresaParceira(empresaParceira);
 
       if (response) {
-        alert(response.message);
+        setShowAlert(true);
+        setAlertMessage(response.message);
       }
     } catch (error: any) {
       console.error("Erro ao cadastrar empresa parceira:", error);
 
       if (error.response && error.response.data && error.response.data.message) {
-          alert(error.response.data.message);
+        setShowAlert(true);
+        setAlertMessage(error.response.data.message);
       } else {
-          alert('Erro inesperado ao cadastrar empresa parceira');
+        setShowAlert(true);
+        setAlertMessage('Erro inesperado ao cadastrar empresa parceira');
       }
     }
   };
@@ -166,6 +176,13 @@ export default function CadastroEmpresa() {
       <TouchableOpacity style={styles.button} onPress={cadastrarEmpresaParceira}>
         <Text style={styles.buttonText}>CADASTRAR</Text>
       </TouchableOpacity>
+
+      {showAlert && (
+        <Alert
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </View>
   );
 }

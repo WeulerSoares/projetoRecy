@@ -7,6 +7,7 @@ import { EmpresaParceira } from '../services/models/empresaParceira';
 import { Picker } from '@react-native-picker/picker';
 import { Cupom } from '../services/models/cupom';
 import { CupomService } from '../services/cupomService';
+import Alert from '@/components/Alert';
 
 export default function CadastroCupom() {
   const [empresas, setEmpresas] = useState<EmpresaParceira[]>([]);
@@ -14,7 +15,9 @@ export default function CadastroCupom() {
   const [pontos, setPontos] = useState('');
   const [valor, setValor] = useState('');
   const [quantidade, setQuantidade] = useState(0);
-  
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+
   const formatarPontos = (pontos: string) => {
     return pontos.replace(/\D/g, '');
   };
@@ -39,7 +42,8 @@ export default function CadastroCupom() {
 
   const cadastrarCupom = async () => {
     if (!empresaSelecionada || !pontos || !valor || !quantidade) {
-      alert("Por favor, preencha todos os campos.");
+      setShowAlert(true);
+      setAlertMessage('Por favor, preencha todos os campos.');
       return;
     }
 
@@ -54,14 +58,16 @@ export default function CadastroCupom() {
       const response = await CupomService.criarCupom(cupom);
 
       if (response) {
-        alert(response.message);
+        setShowAlert(true);
+        setAlertMessage(response.message);
       } else {
-        console.error('Erro ao criar cupom');
-        alert('Erro ao criar cupom');
+        setShowAlert(true);
+        setAlertMessage('Erro ao criar cupom');
       }
     } catch (error) {
       console.error("Erro ao criar cupom:", error);
-      alert("Erro de conexão. Tente novamente mais tarde.");
+      setShowAlert(true);
+      setAlertMessage('Erro de conexão. Tente novamente mais tarde.');
     }
   };
 
@@ -133,6 +139,13 @@ export default function CadastroCupom() {
       <TouchableOpacity style={styles.button} onPress={cadastrarCupom}>
         <Text style={styles.buttonText}>CADASTRAR</Text>
       </TouchableOpacity>
+
+      {showAlert && (
+        <Alert
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </View>
   );
 }

@@ -13,6 +13,7 @@ import { RegistroColeta } from '../services/models/registroColeta';
 import { RegistroColetaService } from '../services/registroColetaService';
 import { useRouter } from "expo-router";
 import { TipoMaterial } from '../services/enums/tipoMaterial';
+import Alert from '@/components/Alert';
 
 export default function RegistrarColeta() {
     const [tipoMaterial, setTipoMaterial] = useState('');
@@ -23,6 +24,9 @@ export default function RegistrarColeta() {
     const user = useUser();
     const [quantidade, setQuantidade] = useState('');
     const [preco, setPreco] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    
     const router = useRouter();
 
     async function checaPontoDeColetaExistente(userId: number) {
@@ -34,7 +38,8 @@ export default function RegistrarColeta() {
             }
 
             router.replace("/(tabs)/pontoColeta/opcoesPerfil/profile");
-            alert("É necessário que atualize suas informações para poder seguir com as funcionalidades!");
+            setShowAlert(true);
+            setAlertMessage('É necessário que atualize suas informações para poder seguir com as funcionalidades!');
 
         } catch (error) {
             console.log(error);
@@ -112,7 +117,8 @@ export default function RegistrarColeta() {
 
     const RegistrarColeta = async () => {
         if(!cpf || !tipoMaterial || !quantidade) {
-            alert("Insira todos os dados para registrar a coleta!");
+            setShowAlert(true);
+            setAlertMessage('Insira todos os dados para registrar a coleta!');
             return;
         }
         try {
@@ -135,7 +141,8 @@ export default function RegistrarColeta() {
                     if (response) {
                         AddPontos();
                         resetaCampos();
-                        alert("Registro realizado com sucsso!");
+                        setShowAlert(true);
+                        setAlertMessage('Registro realizado com sucsso!');
                     }
                 }
             }
@@ -166,7 +173,8 @@ export default function RegistrarColeta() {
                 const response = await UsuarioService.atualizarUsuario(usuario.id, usuario)
 
                 if (response) {
-                    alert("+50 pontos, parabens!");
+                    setShowAlert(true);
+                    setAlertMessage('Você recebeu 50 pontos, parabens!');
                 }
             }
 
@@ -297,7 +305,12 @@ export default function RegistrarColeta() {
                 <Text style={styles.buttonText}>CADASTRAR</Text>
             </TouchableOpacity>
 
-
+            {showAlert && (
+                <Alert
+                    message={alertMessage}
+                    onClose={() => setShowAlert(false)}
+                />
+            )}
         </View>
     );
 }

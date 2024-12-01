@@ -6,10 +6,13 @@ import { useUser } from '@/components/UserContext';
 import * as ImagePicker from 'react-native-image-picker';
 import { Link } from 'expo-router';
 import { UsuarioService } from '../../services/usuarioService';
+import Alert from '@/components/Alert';
 
 export default function CadastroCupom() {
   const user = useUser();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {
     const obterFoto = async () => {
@@ -40,7 +43,8 @@ export default function CadastroCupom() {
         await UsuarioService.adicionarFoto(user?.id!, uri!);
       }
     } catch (error) {
-      alert('Não foi possível selecionar a imagem.');
+      setShowAlert(true);
+      setAlertMessage('Não foi possível selecionar a imagem.');
     }
   };
 
@@ -64,6 +68,13 @@ export default function CadastroCupom() {
       </TouchableOpacity>
       
       <LogoutButton />
+
+      {showAlert && (
+        <Alert
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </View>
   );
 }

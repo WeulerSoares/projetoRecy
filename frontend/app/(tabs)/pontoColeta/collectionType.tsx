@@ -15,6 +15,7 @@ import { Picker } from '@react-native-picker/picker';
 import { PontoColetaService } from '../services/pontoColetaService';
 import { MaterialItem } from '../services/interfaces/materialItem';
 import { TipoMaterial } from '../services/enums/tipoMaterial';
+import Alert from '@/components/Alert';
 
 export default function TipoMaterialRecolhido() {
 
@@ -25,6 +26,9 @@ export default function TipoMaterialRecolhido() {
     const [tipoMaterial, setTipoMaterial] = useState('');
     const [preco, setPreco] = useState('');
     const [medida, setMedida] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+
     const user = useUser();
 
     function resetAddInputs() {
@@ -35,7 +39,8 @@ export default function TipoMaterialRecolhido() {
 
     const addMaterialColeta = async () => {
         if(!tipoMaterial || !medida || !preco) {
-            alert("Informe todos os campos para registrar um novo material");
+            setShowAlert(true);
+            setAlertMessage('Informe todos os campos para registrar um novo material');
             return;
         }
         try {
@@ -70,7 +75,8 @@ export default function TipoMaterialRecolhido() {
 
     const updateMaterialColeta = async () => {
         if(selectedItem && !selectedItem.medida || !selectedItem?.preco) {
-            alert("Informe todos os campos para registrar um novo material");
+            setShowAlert(true);
+            setAlertMessage('Informe todos os campos para registrar um novo material');
             return;
         }
         try {
@@ -88,7 +94,8 @@ export default function TipoMaterialRecolhido() {
 
                     const response = await MaterialColetaService.atualizarMaterial(selectedItem.id, materialColeta);
                     if (response) {
-                        alert('Material atualizado com sucesso!');
+                        setShowAlert(true);
+                        setAlertMessage('Material atualizado com sucesso!');
                         obterItens();
                         setEditModalVisible(false);
                     }
@@ -149,7 +156,8 @@ export default function TipoMaterialRecolhido() {
         try {
             if (selectedItem) {
                 const response = await MaterialColetaService.deletarMaterial(selectedItem.id);
-                alert('Material deletado com sucesso!');
+                setShowAlert(true);
+                setAlertMessage('Material deletado com sucesso!');
                 obterItens();
                 setEditModalVisible(false);
             }
@@ -313,6 +321,13 @@ export default function TipoMaterialRecolhido() {
                     </View>
                 </View>
             </Modal>
+
+            {showAlert && (
+                <Alert
+                    message={alertMessage}
+                    onClose={() => setShowAlert(false)}
+                />
+            )}
         </View>
     );
 };
