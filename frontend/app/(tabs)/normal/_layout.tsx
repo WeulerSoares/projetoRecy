@@ -13,7 +13,7 @@ export default function TabLayoutNormal() {
           headerShown: false,
         }}>
         <Tabs.Screen
-          name="index"
+          name="inicio"
           options={{
             tabBarLabel: '',
             tabBarIcon: ({ color, focused }) => (

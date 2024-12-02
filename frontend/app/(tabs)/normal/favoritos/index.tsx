@@ -45,10 +45,10 @@ export default function FavoritosScreen() {
         {pontosColeta.map((pontoColeta) => (
           <View key={pontoColeta.idPontoColeta} style={styles.card}>
             <View style={styles.imagePlaceholder}>
-            {pontoColeta.foto ? (
-              <Image source={{ uri: pontoColeta.foto }} style={styles.image} />
+              {pontoColeta.foto ? (
+                <Image source={{ uri: pontoColeta.foto }} style={styles.image} />
               ) : null}
-          </View>
+            </View>
             <View style={styles.info}>
               <Text style={styles.nome}>{pontoColeta.nomePontoColeta}</Text>
               <View style={styles.actions}>
@@ -155,20 +155,20 @@ const styles = StyleSheet.create({
         color: "#333",
         fontSize: 20,
     },
-      actions: {
-        flexDirection: "row",
-        alignItems: "center", 
-      },
-      iconeFavorito: {
-        marginTop: 5,
-        marginLeft: 15, 
-      },
-      starRating: {
-        marginTop: 4,
-      },
-      image: {
-        width: '100%',
-        height: '100%',
-        borderRadius: 10,
-      },
+    actions: {
+      flexDirection: "row",
+      alignItems: "center", 
+    },
+    iconeFavorito: {
+      marginTop: 5,
+      marginLeft: 15, 
+    },
+    starRating: {
+      marginTop: 4,
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 10,
+    },
 });

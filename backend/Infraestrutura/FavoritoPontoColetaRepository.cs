@@ -51,6 +51,5 @@ namespace AppReciclagem.Infraestrutura
 
             return query.ToList();
         }
-
     }
 }

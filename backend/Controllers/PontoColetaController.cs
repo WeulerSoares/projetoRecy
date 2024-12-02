@@ -59,20 +59,28 @@ namespace AppReciclagem.Controllers
             }
         }
 
-        [HttpGet("range/{raio}/{latitude}/{longitude}")]
-        public IActionResult GetByRange(double raio, double latitude, double longitude)
+        [HttpGet("usuario/{idUsuario}/range/{raio}/{latitude}/{longitude}")]
+        public IActionResult ObterPontosColetaNoRange(
+            int idUsuario,
+            double raio,
+            double latitude,
+            double longitude)
         {
             try
             {
-                var pontosColeta = pontoColetaRepository.GetInRange(raio, latitude, longitude);
+                var pontosColeta = pontoColetaRepository.ObterPontosColetaNoRange(
+                    idUsuario,
+                    raio,
+                    latitude,
+                    longitude);
+
                 return Ok(pontosColeta);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Erro ao cadastrar dados do ponto de coleta", details = ex.Message });
+                return StatusCode(500, new { message = "Erro ao buscar dados dos pontos de coleta", details = ex.Message });
             }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Add(PontoColetaViewModel pontoColetaModel) 

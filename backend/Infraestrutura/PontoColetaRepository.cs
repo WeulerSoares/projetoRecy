@@ -87,7 +87,46 @@ namespace AppReciclagem.Infraestrutura
             return pontosProximos;
         }
 
-        public static double CalculateHaversine(double lat1, double lon1, double lat2, double lon2)
+        public IEnumerable<PontoColetaPesquisa> ObterPontosColetaNoRange(
+            int idUsuario,
+            double range,
+            double latitude,
+            double longitude)
+        {
+            var mediasAvaliacoes = context.AvaliacoesPontosColeta
+                .GroupBy(a => a.IdPontoColeta)
+                .Select(g => new
+                {
+                    IdPontoColeta = g.Key,
+                    MediaAvaliacao = g.Average(a => a.Avaliacao)
+                });
+
+            var query =
+                from pontoColeta in context.PontosColeta
+                join media in mediasAvaliacoes on pontoColeta.Id equals media.IdPontoColeta into mediaGroup
+                from media in mediaGroup.DefaultIfEmpty()
+                join favorito in context.PontosColetaFavoritos
+                    on new { IdPontoColeta = pontoColeta.Id, IdUsuario = idUsuario }
+                    equals new { favorito.IdPontoColeta, favorito.IdUsuario } into favoritoGroup
+                from favorito in favoritoGroup.DefaultIfEmpty()
+                select new PontoColetaPesquisa(
+                    pontoColeta.Id,
+                    pontoColeta.Nome,
+                    favorito != null,
+                    media.MediaAvaliacao,
+                    $"{pontoColeta.Rua}, Nº {pontoColeta.Numero}, {pontoColeta.Bairro}, {pontoColeta.Cidade}, {pontoColeta.Estado}",
+                    pontoColeta.Latitude,
+                    pontoColeta.Longitude);
+
+            return query.ToArray()
+                .Where(f => this.CalculateHaversine(
+                    latitude,
+                    longitude,
+                    f.Latitude,
+                    f.Longitude) <= range);
+        }
+
+        private double CalculateHaversine(double lat1, double lon1, double lat2, double lon2)
         {
             // Raio da Terra
             var R = 6371;

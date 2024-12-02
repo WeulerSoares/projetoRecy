@@ -1,88 +1,45 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Platform, Text, ScrollView, TouchableOpacity, FlatList, Modal, TextInput } from 'react-native';
+import { View, StyleSheet, Platform, Text, ScrollView, TouchableOpacity, FlatList, Modal, TextInput, Image } from 'react-native';
 import { getCurrentPositionAsync, LocationAccuracy, LocationObject, requestForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
-import { PontoColetaService } from '../services/pontoColetaService';
-import { PontoColeta } from '../services/models/pontoColeta';
-import { CollectionPoint } from '../services/interfaces/collectionPoint';
+import { PontoColetaService } from '../../services/pontoColetaService';
 import { FontAwesome } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
-import { MaterialColetaService } from '../services/materialColetaService';
+import { Link } from 'expo-router';
+import { useUser } from '@/components/UserContext';
+import { PontoColetaPesquisa } from '../../services/models/pontoColetaPesquisa';
+import StarRating from 'react-native-star-rating-widget';
 
 const TabTwoScreen = () => {
   const [location, setLocation] = useState<LocationObject | null>(null);
   const mapRef = useRef<MapView>(null);
-  const [collectionPoints, setCollectionPoints] = useState<PontoColeta[] | null>(null);
-  const [items, setItems] = useState<CollectionPoint[]>([]);
-  const [material, setMaterial] = useState('');
+  const [pontosColeta, setPontosColeta] = useState<PontoColetaPesquisa[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [radio, setRadio] = useState('10');
   const [tipoMaterial, setTipoMaterial] = useState('');
 
+  const user = useUser();
+  
   async function requestLocationPermissions() {
     const { granted } = await requestForegroundPermissionsAsync();
     if (granted) {
       const currentPosition = await getCurrentPositionAsync();
       setLocation(currentPosition);
-      getPontosDeColeta();
+      getPontosDeColeta(currentPosition);
     }
   }
 
-  async function getPontosDeColeta() {
-    if (location) {
-      const response = await PontoColetaService.getPontosColetaByRange(parseInt(radio), location.coords.latitude, location.coords.longitude);
-      if (response) {
-        setCollectionPoints(response);
-        formatItems(response);
+  async function getPontosDeColeta(localizacao: LocationObject) {
+    if (localizacao) {    
+      const dados = await PontoColetaService.getPontosColetaByRange(user?.id!, parseInt(radio), localizacao.coords.latitude, localizacao.coords.longitude);
 
-        // if(tipoMaterial && collectionPoints) {
-        //   let materials = [];
-        //   collectionPoints.forEach((item) => {
-        //     const responseMaterial = await MaterialColetaService.obterMateriais()
-        //   })
-        // }
+      for (const f of dados) {
+        f.foto = await PontoColetaService.obterFoto(f.idPontoColeta);
       }
+
+      setPontosColeta(dados);
     }
   }
-
-  function formatItems(pontoColeta: PontoColeta[]) {
-    const formattedData: CollectionPoint[] = pontoColeta.map((item: any) => ({
-      id: item.id,
-      nome: item.nome,
-      cnpj: item.cnpj,
-      cep: item.cep,
-      rua: item.rua,
-      numero: item.numero,
-      bairro: item.bairro,
-      cidade: item.cidade,
-      estado: item.estado
-    }));
-
-    setItems(formattedData)
-  }
-
-  const renderItem = ({ item }: { item: CollectionPoint }) => {
-    return (
-      <View style={styles.cardContent}>
-        <View style={styles.placeholderImage} />
-        <View style={styles.cardText}>
-          <Text style={styles.cardTitle}>{item.nome}</Text>
-          <Text style={styles.cardDetails}>Endereço: {item.rua}, {item.numero}, {item.bairro}, {item.cidade}, {item.estado}</Text>
-          {material &&
-            <Text style={styles.cardDetails}>Material: {material}</Text> &&
-            <Text style={styles.cardDetails}>Preço: {material}</Text>
-          }
-          <View style={styles.ratingContainer}>
-            <FontAwesome name="star" size={16} color="orange" />
-            <Text style={styles.rating}>5,0</Text>
-          </View>
-          <TouchableOpacity style={styles.moreInfoButton}>
-            <Text style={styles.moreInfoText}>Mais informações</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    )
-  };
 
   useEffect(() => {
     requestLocationPermissions();
@@ -101,7 +58,8 @@ const TabTwoScreen = () => {
         }
       );
     }
-    getPontosDeColeta();
+
+    getPontosDeColeta(location!);
   }, []);
 
 
@@ -110,30 +68,54 @@ const TabTwoScreen = () => {
   if (Platform.OS === 'web') {
     return (
       <View style={styles.container}>
-        <Text style={styles.headerText}>Encontre o melhor ponto de coleta para você</Text>
-        <View style={styles.filterContainer}>
-          <TouchableOpacity
-            style={styles.filterButton}
-            onPress={() => {
-              console.log("Entrou")
-              setModalVisible(true)
-            }}>
-            <Text style={styles.filterButtonText}>Filtros</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.filterButton}>
-            <Text style={styles.filterButtonText}>Favoritos</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.mapPlaceholder}>
-          <Text>Mapa não é suportado no navegador.</Text>
-        </View>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <FlatList
-            data={items}
-            renderItem={renderItem}
-            keyExtractor={(item) => String(item.id)}
-            contentContainerStyle={styles.list}
-          />
+          <Text style={styles.headerText}>Encontre o melhor ponto de coleta para você</Text>
+          <View style={styles.filterContainer}>
+            <TouchableOpacity
+              style={styles.filterButton}
+              onPress={() => {
+                console.log("Entrou")
+                setModalVisible(true)
+              }}>
+              <Text style={styles.filterButtonText}>Filtros</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.filterButton}>
+              <Text style={styles.filterButtonText}>Favoritos</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.mapPlaceholder}>
+            <Text>Mapa não é suportado no navegador.</Text>
+          </View>
+          {pontosColeta.map((pontoColeta) => (
+            <View style={styles.cardContent}>
+              <View style={styles.placeholderImage}>
+                {pontoColeta.foto ? (
+                  <Image source={{ uri: pontoColeta.foto }} style={styles.image} />
+                ) : null}
+              </View>
+              <View style={styles.cardText}>
+                <Text style={styles.cardTitle}>{pontoColeta.nomePontoColeta}</Text>
+                <Text style={styles.cardDetails}>Endereço: {pontoColeta.endereco}</Text>
+                {/* {material &&
+                  <Text style={styles.cardDetails}>Material: {material}</Text> &&
+                  <Text style={styles.cardDetails}>Preço: {material}</Text>
+                } */}
+                <View style={styles.rating}>
+                  <StarRating
+                      rating={pontoColeta.avaliacao || 0}
+                      onChange={() => {}}
+                      enableHalfStar
+                      starSize={22}
+                      style={styles.starRating}
+                  />
+                  <Text style={styles.ratingText}>{pontoColeta.avaliacao ? pontoColeta.avaliacao.toFixed(1) : 0}</Text>
+                </View>
+                <TouchableOpacity style={styles.moreInfoButton}>
+                  <Link href={{ pathname: '/normal/inicio/perfilPontoColeta', params: { id: pontoColeta.idPontoColeta }}} style={styles.moreInfoText}>Mais informações</Link>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
         </ScrollView>
 
         {/* Filtros */}
@@ -172,7 +154,7 @@ const TabTwoScreen = () => {
               <TouchableOpacity
                 style={styles.buttonAdd}
                 onPress={() => { 
-                  getPontosDeColeta(),
+                  getPontosDeColeta(location!),
                   setModalVisible(false)
                 }}
               >
@@ -183,7 +165,7 @@ const TabTwoScreen = () => {
                 onPress={() => {
                     setTipoMaterial(''),
                     setRadio('10'),
-                    getPontosDeColeta()
+                    getPontosDeColeta(location!)
                     setModalVisible(false);
                 }}>
                 <Text style={styles.buttonText}>Limpar Filtro</Text>
@@ -208,7 +190,7 @@ const TabTwoScreen = () => {
     <View style={styles.container}>
       <Text style={styles.headerText}>Encontre o melhor ponto de coleta para você</Text>
       <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.filterButton} onPress={getPontosDeColeta}>
+        <TouchableOpacity style={styles.filterButton} onPress={getPontosDeColeta(location!)}>
           <Text style={styles.filterButtonText}>Material ▼</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.filterButton}>
@@ -281,11 +263,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#6dc06d',
     paddingTop: 40,
+    paddingHorizontal: 16,
   },
   map: {
     flex: 1,
     width: '100%',
-    paddingHorizontal: 16,
     paddingBottom: 80,
   },
   webFallback: {
@@ -294,7 +276,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scrollContent: {
-    paddingHorizontal: 16,
     paddingBottom: 80,
   },
   mapPlaceholder: {
@@ -343,7 +324,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 16,
     padding: 16,
-    marginHorizontal: 8,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -375,16 +355,11 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     flexWrap: 'wrap',
   },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
   rating: {
-    fontSize: 16,
-    marginLeft: 4,
-    color: 'orange',
-  },
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
+},
   moreInfoButton: {
     marginTop: 8,
     alignSelf: 'flex-start',
@@ -480,8 +455,19 @@ const styles = StyleSheet.create({
   cleanButton: {
     backgroundColor: '#f44336',
   },
-
-
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  },
+  starRating: {
+    marginTop: 4,
+  },
+  ratingText: {
+    marginLeft: 5,
+    color: "#333",
+    fontSize: 20,
+},
 });
 
 export default TabTwoScreen;

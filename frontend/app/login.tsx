@@ -46,7 +46,7 @@ export default function App() {
       const response = await UsuarioService.getUsuario(userCredential.user.uid);
       
       if (response.tipoUsuario === TipoUsuario.Coletor) {
-        router.replace('/(tabs)/normal');
+        router.replace('/(tabs)/normal/inicio');
       } else if (response.tipoUsuario === TipoUsuario.PontoColeta) {
         router.replace('/(tabs)/pontoColeta');
       } else {

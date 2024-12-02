@@ -13,6 +13,12 @@
             double latitude, 
             double longitude);
 
+        IEnumerable<PontoColetaPesquisa> ObterPontosColetaNoRange(
+            int idUsuario,
+            double range,
+            double latitude,
+            double longitude);
+
         void Add(PontoColeta pontoColeta);
 
         void Update(PontoColeta pontoColeta);
