@@ -11,7 +11,6 @@ import measureTypes from '../services/interfaces/measureType';
 import { MaterialItem } from '../services/interfaces/materialItem';
 import { RegistroColeta } from '../services/models/registroColeta';
 import { RegistroColetaService } from '../services/registroColetaService';
-import { useRouter } from "expo-router";
 import { TipoMaterial } from '../services/enums/tipoMaterial';
 import Alert from '@/components/Alert';
 
@@ -26,26 +25,7 @@ export default function RegistrarColeta() {
     const [preco, setPreco] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
-    
-    const router = useRouter();
-
-    async function checaPontoDeColetaExistente(userId: number) {
-        try {
-            const pontoColeta = await PontoColetaService.getPontoColeta(userId);
-
-            if (pontoColeta !== null) {
-                return;
-            }
-
-            router.replace("/(tabs)/pontoColeta/opcoesPerfil/profile");
-            setShowAlert(true);
-            setAlertMessage('É necessário que atualize suas informações para poder seguir com as funcionalidades!');
-
-        } catch (error) {
-            console.log(error);
-        }
-
-    }
+    const [pontoColetaCadastrado, setPontoColetaCadastrado] = useState(false);
 
     function resetaCampos() {
         setCpf('');
@@ -86,7 +66,12 @@ export default function RegistrarColeta() {
     const obterItens = async () => {
         try {
             if (user?.id) {
-                const pontoColeta = await PontoColetaService.getPontoColeta(user?.id)
+                const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
+
+                if (pontoColeta?.rua){
+                    setPontoColetaCadastrado(true);
+                }
+
                 if (pontoColeta) {
                     const response = await MaterialColetaService.obterMateriais(pontoColeta.id);
 
@@ -116,11 +101,18 @@ export default function RegistrarColeta() {
     }
 
     const RegistrarColeta = async () => {
+        if (!pontoColetaCadastrado) {
+            setShowAlert(true);
+            setAlertMessage('É necessário que atualize suas informações para poder seguir com as funcionalidades!');
+            return;
+        }
+
         if(!cpf || !tipoMaterial || !quantidade) {
             setShowAlert(true);
             setAlertMessage('Insira todos os dados para registrar a coleta!');
             return;
         }
+
         try {
             if (user?.id) {
                 const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
@@ -187,15 +179,7 @@ export default function RegistrarColeta() {
 
     useEffect(() => {
         obterItens();
-        if (user?.id)
-            checaPontoDeColetaExistente(user.id)
     }, []);
-
-    useState(() => {
-        if (user?.id)
-            checaPontoDeColetaExistente(user.id)
-
-    })
 
     return (
         <View style={styles.container}>

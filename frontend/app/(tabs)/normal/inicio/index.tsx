@@ -3,12 +3,13 @@ import { View, StyleSheet, Platform, Text, ScrollView, TouchableOpacity, FlatLis
 import { getCurrentPositionAsync, LocationAccuracy, LocationObject, requestForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
 import { PontoColetaService } from '../../services/pontoColetaService';
-import { FontAwesome } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import { Link } from 'expo-router';
 import { useUser } from '@/components/UserContext';
 import { PontoColetaPesquisa } from '../../services/models/pontoColetaPesquisa';
 import StarRating from 'react-native-star-rating-widget';
+import { PontoColetaParaFiltro } from '../../services/models/pontoColetaParaFiltro';
+import { TipoMaterial } from '../../services/enums/tipoMaterial';
 
 const TabTwoScreen = () => {
   const [location, setLocation] = useState<LocationObject | null>(null);
@@ -20,6 +21,47 @@ const TabTwoScreen = () => {
 
   const user = useUser();
   
+    const dados = [{
+      idPontoColeta: 1,
+      nomePontoColeta: 'Estação Circular',
+      favoritado: false,
+      avaliacao: 5,
+      endereco: 'Av. Juiz Marco Túlio Isaac, 50 - Jardim da Cidade, Betim - MG',
+      foto: 'https://lh5.googleusercontent.com/p/AF1QipOmo7q-buUeqFIDe3E8_XQXpcG4Ia6GRDU2iC30=w426-h240-k-no'
+    },
+    {
+      idPontoColeta: 2,
+      nomePontoColeta: 'MW Recicláveis',
+      favoritado: false,
+      avaliacao: 5,
+      endereco: 'R. Florianópolis, 107 - Niterói, Betim - MG',
+      foto: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=UTy0tFkSagSkZg1QAgusEw&cb_client=search.gws-prod.gps&w=408&h=240&yaw=14.468989&pitch=0&thumbfov=100'
+    },
+    {
+      idPontoColeta: 3,
+      nomePontoColeta: 'Ecoponto E-MILE - PUC BETIM',
+      favoritado: false,
+      avaliacao: 4,
+      endereco: 'R. do Rosário, 1081 - Angola, Betim - MG, 32630-000',
+      foto: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=fpvAmtInav5KZ9wFdysztQ&cb_client=search.gws-prod.gps&w=408&h=240&yaw=296.94507&pitch=0&thumbfov=100'
+    },
+    {
+      idPontoColeta: 4,
+      nomePontoColeta: 'Reciclagem Bandeirantes',
+      favoritado: false,
+      avaliacao: 3,
+      endereco: 'Av. Bandeirantes, 103 - Chácaras, Betim - MG',
+      foto: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=ul_w0iEj6GEsRO3eFbYbbg&cb_client=search.gws-prod.gps&w=408&h=240&yaw=330.12436&pitch=0&thumbfov=100'
+    },
+    {
+      idPontoColeta: 5,
+      nomePontoColeta: 'Brasil Reciclagem MG',
+      favoritado: false,
+      avaliacao: 5,
+      endereco: 'R. Antônio Soares de Melo, 61 - Betim Industrial, Betim - MG',
+      foto: 'https://lh5.googleusercontent.com/p/AF1QipMYUuCRVNqA_uWEUKY9vLHAI_fhclFhxwQYlbUZ=w408-h408-k-no'
+    }];
+
   async function requestLocationPermissions() {
     const { granted } = await requestForegroundPermissionsAsync();
     if (granted) {
@@ -30,8 +72,17 @@ const TabTwoScreen = () => {
   }
 
   async function getPontosDeColeta(localizacao: LocationObject) {
-    if (localizacao) {    
-      const dados = await PontoColetaService.getPontosColetaByRange(user?.id!, parseInt(radio), localizacao.coords.latitude, localizacao.coords.longitude);
+    if (Platform.OS === 'web' && localizacao) {    
+
+      const filtro = {
+        idUsuario: user?.id!,
+        raio: parseInt(radio),
+        latitude: localizacao.coords.latitude,
+        longitude: localizacao.coords.longitude,
+        tipoMaterial: tipoMaterial ? tipoMaterial : null
+      } as PontoColetaParaFiltro;
+
+      const dados = await PontoColetaService.getPontosColeta(filtro);
 
       for (const f of dados) {
         f.foto = await PontoColetaService.obterFoto(f.idPontoColeta);
@@ -40,6 +91,24 @@ const TabTwoScreen = () => {
       setPontosColeta(dados);
     }
   }
+
+  const obterPrecoFormatado = (preco: number, tipoMedida: string) => {
+    let medida = '';
+
+    switch (tipoMedida) {
+      case 'peso':
+        medida = 'kg';
+        break;
+      case 'volume':
+        medida = 'L';
+        break;
+      case 'unidade':
+        medida = 'Unidade';
+        break;
+    }
+
+    return `R$ ${preco}/${medida}`
+  };
 
   useEffect(() => {
     requestLocationPermissions();
@@ -74,20 +143,16 @@ const TabTwoScreen = () => {
             <TouchableOpacity
               style={styles.filterButton}
               onPress={() => {
-                console.log("Entrou")
                 setModalVisible(true)
               }}>
               <Text style={styles.filterButtonText}>Filtros</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.filterButton}>
-              <Text style={styles.filterButtonText}>Favoritos</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.mapPlaceholder}>
             <Text>Mapa não é suportado no navegador.</Text>
           </View>
           {pontosColeta.map((pontoColeta) => (
-            <View style={styles.cardContent}>
+            <View style={styles.cardContent} key={pontoColeta.idPontoColeta}>
               <View style={styles.placeholderImage}>
                 {pontoColeta.foto ? (
                   <Image source={{ uri: pontoColeta.foto }} style={styles.image} />
@@ -96,10 +161,11 @@ const TabTwoScreen = () => {
               <View style={styles.cardText}>
                 <Text style={styles.cardTitle}>{pontoColeta.nomePontoColeta}</Text>
                 <Text style={styles.cardDetails}>Endereço: {pontoColeta.endereco}</Text>
-                {/* {material &&
-                  <Text style={styles.cardDetails}>Material: {material}</Text> &&
-                  <Text style={styles.cardDetails}>Preço: {material}</Text>
-                } */}
+                {pontoColeta.tipoMaterial &&
+                  <Text style={styles.cardDetails}>Material: {TipoMaterial[pontoColeta.tipoMaterial as keyof typeof TipoMaterial]}
+                  <br></br>
+                  Preço: {obterPrecoFormatado(pontoColeta.precoMaterial!, pontoColeta.tipoMedida)}</Text>
+                }
                 <View style={styles.rating}>
                   <StarRating
                       rating={pontoColeta.avaliacao || 0}
@@ -158,7 +224,7 @@ const TabTwoScreen = () => {
                   setModalVisible(false)
                 }}
               >
-                <Text style={styles.buttonText}>Adicionar</Text>
+                <Text style={styles.buttonText}>Filtrar</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.buttonAdd, styles.cleanButton]}
@@ -188,40 +254,69 @@ const TabTwoScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Encontre o melhor ponto de coleta para você</Text>
-      <View style={styles.filterContainer}>
-        <TouchableOpacity style={styles.filterButton} onPress={getPontosDeColeta(location!)}>
-          <Text style={styles.filterButtonText}>Material ▼</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.filterButton}>
-          <Text style={styles.filterButtonText}>Distância</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.filterButton}>
-          <Text style={styles.filterButtonText}>Favoritos</Text>
-        </TouchableOpacity>
-      </View>
-      {location && (
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          initialRegion={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          }}
-
-        >
-          <Marker
-            coordinate={{
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text style={styles.headerText}>Encontre o melhor ponto de coleta para você</Text>
+        <View style={styles.filterContainer}>
+          <TouchableOpacity style={styles.filterButton} onPress={getPontosDeColeta(location!)}>
+            <Text style={styles.filterButtonText}>Material ▼</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.filterButton}>
+            <Text style={styles.filterButtonText}>Distância</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.filterButton}>
+            <Text style={styles.filterButtonText}>Favoritos</Text>
+          </TouchableOpacity>
+        </View>
+        {location && (
+          <MapView
+            ref={mapRef}
+            style={styles.map}
+            initialRegion={{
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
             }}
-          />
-        </MapView>
-      )}
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text>AAAAAAAAAAAAAAAAAAAAAAAAAAAA</Text>
+
+          >
+            <Marker
+              coordinate={{
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              }}
+            />
+          </MapView>
+        )}
+        {dados.map((pontoColeta) => (
+          <View style={styles.cardContent} key={pontoColeta.idPontoColeta}>
+            <View style={styles.placeholderImage}>
+              {pontoColeta.foto ? (
+                <Image source={{ uri: pontoColeta.foto }} style={styles.image} />
+              ) : null}
+            </View>
+            <View style={styles.cardText}>
+              <Text style={styles.cardTitle}>{pontoColeta.nomePontoColeta}</Text>
+              <Text style={styles.cardDetails}>Endereço: {pontoColeta.endereco}</Text>
+              {/* {material &&
+                <Text style={styles.cardDetails}>Material: {material}</Text> &&
+                <Text style={styles.cardDetails}>Preço: {material}</Text>
+              } */}
+              <View style={styles.rating}>
+                <StarRating
+                    rating={pontoColeta.avaliacao || 0}
+                    onChange={() => {}}
+                    enableHalfStar
+                    starSize={22}
+                    style={styles.starRating}
+                />
+                <Text style={styles.ratingText}>{pontoColeta.avaliacao ? pontoColeta.avaliacao.toFixed(1) : 0}</Text>
+              </View>
+              <TouchableOpacity style={styles.moreInfoButton}>
+                <Link href={{ pathname: '/normal/inicio/perfilPontoColeta', params: { id: pontoColeta.idPontoColeta }}} style={styles.moreInfoText}>Mais informações</Link>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
       </ScrollView>
 
       {/* Filtros */}
@@ -269,6 +364,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     paddingBottom: 80,
+    marginBottom: 80,
   },
   webFallback: {
     flex: 1,

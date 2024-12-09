@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Button } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Button, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import validator from 'validator';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
@@ -36,6 +36,10 @@ export default function App() {
       setAlertMessage('Por favor, preencha todos os campos.');
       return;
     }
+
+    if (Platform.OS !== 'web') {
+      router.replace('/(tabs)/normal/inicio');
+    }
     
     const auth = getAuth();
 
@@ -48,7 +52,7 @@ export default function App() {
       if (response.tipoUsuario === TipoUsuario.Coletor) {
         router.replace('/(tabs)/normal/inicio');
       } else if (response.tipoUsuario === TipoUsuario.PontoColeta) {
-        router.replace('/(tabs)/pontoColeta');
+        router.replace('/(tabs)/pontoColeta/opcoesPerfil');
       } else {
         router.replace('/(tabs)/admin');
       }

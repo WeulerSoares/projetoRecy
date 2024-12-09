@@ -33,5 +33,11 @@
         public double Latitude { get; set; }
 
         public double Longitude { get; set; }
+
+        public string TipoMaterial { get; set; }
+
+        public decimal? PrecoMaterial { get; set; }
+
+        public string TipoMedida { get; set; }
     }
 }

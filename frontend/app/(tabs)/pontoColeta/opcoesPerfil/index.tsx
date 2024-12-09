@@ -4,9 +4,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import LogoutButton from '@/components/logoutButton';
 import { useUser } from '@/components/UserContext';
 import * as ImagePicker from 'react-native-image-picker';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { UsuarioService } from '../../services/usuarioService';
 import Alert from '@/components/Alert';
+import { PontoColetaService } from '../../services/pontoColetaService';
 
 export default function CadastroCupom() {
   const user = useUser();
@@ -14,6 +15,25 @@ export default function CadastroCupom() {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
+  const router = useRouter();
+
+    async function checaPontoDeColetaExistente() {
+      try {
+        const pontoColeta = await PontoColetaService.getPontoColeta(user?.id!);
+
+        if (pontoColeta !== null) {
+          setShowAlert(false);
+          router.replace('/(tabs)/pontoColeta');
+          return;
+        }
+
+        setShowAlert(true);
+        setAlertMessage('É necessário que atualize suas informações para poder seguir com as funcionalidades!');
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    
   useEffect(() => {
     const obterFoto = async () => {
       try {
@@ -25,8 +45,10 @@ export default function CadastroCupom() {
         console.error("Erro ao obter foto do usuário:", error);
       }
     };
-  
+    
+    checaPontoDeColetaExistente();
     obterFoto();
+    
   }, [user]);
   
   const handleSelectImage = async () => {

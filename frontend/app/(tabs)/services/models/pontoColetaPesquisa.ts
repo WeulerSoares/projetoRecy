@@ -4,5 +4,8 @@ export interface PontoColetaPesquisa {
     favoritado: boolean;
     avaliacao?: number;
     endereco: string;
+    tipoMaterial: string;
+    precoMaterial?: number;
+    tipoMedida: string;
     foto: string | null;
   }

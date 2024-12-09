@@ -28,6 +28,7 @@ export default function TipoMaterialRecolhido() {
     const [medida, setMedida] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+    const [pontoColetaCadastrado, setPontoColetaCadastrado] = useState(false);
 
     const user = useUser();
 
@@ -37,12 +38,13 @@ export default function TipoMaterialRecolhido() {
         setMedida('');
     }
 
-    const addMaterialColeta = async () => {
+    const addMaterialColeta = async () => {        
         if(!tipoMaterial || !medida || !preco) {
             setShowAlert(true);
             setAlertMessage('Informe todos os campos para registrar um novo material');
             return;
         }
+        
         try {
             if (user?.id) {
                 const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
@@ -131,15 +133,20 @@ export default function TipoMaterialRecolhido() {
         try {
             if (user?.id) {
                 const pontoColeta = await PontoColetaService.getPontoColeta(user?.id);
+
+                if (pontoColeta?.rua){
+                    setPontoColetaCadastrado(true);
+                }
+
                 if (pontoColeta) {
                     const response = await MaterialColetaService.obterMateriais(pontoColeta.id);
 
-                const formattedData: MaterialItem[] = response.map((material: any) => ({
-                    id: material.id.toString(),
-                    tipo: material.tipoMaterial,
-                    medida: material.medida,
-                    preco: obterDescricaoPreco(material.preco, material.medida),
-                }));
+                    const formattedData: MaterialItem[] = response.map((material: any) => ({
+                        id: material.id.toString(),
+                        tipo: material.tipoMaterial,
+                        medida: material.medida,
+                        preco: obterDescricaoPreco(material.preco, material.medida),
+                    }));
 
                     setItems(formattedData);
                 }
@@ -200,7 +207,14 @@ export default function TipoMaterialRecolhido() {
             {/* Botão de adicionar */}
             <TouchableOpacity
                 style={styles.addButton}
-                onPress={() => setAddModalVisible(true)}
+                onPress={() => {
+                    if (pontoColetaCadastrado) {
+                        setAddModalVisible(true);
+                    } else {
+                        setShowAlert(true);
+                        setAlertMessage('É necessário que atualize suas informações para poder seguir com as funcionalidades!');
+                    }
+                }}
             >
                 <Text style={styles.addButtonText}>+</Text>
             </TouchableOpacity>

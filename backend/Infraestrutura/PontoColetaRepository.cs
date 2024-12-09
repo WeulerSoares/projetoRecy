@@ -87,11 +87,12 @@ namespace AppReciclagem.Infraestrutura
             return pontosProximos;
         }
 
-        public IEnumerable<PontoColetaPesquisa> ObterPontosColetaNoRange(
+        public IEnumerable<PontoColetaPesquisa> ObterPontosColeta(
             int idUsuario,
             double range,
             double latitude,
-            double longitude)
+            double longitude,
+            string tipoMaterial)
         {
             var mediasAvaliacoes = context.AvaliacoesPontosColeta
                 .GroupBy(a => a.IdPontoColeta)
@@ -109,6 +110,7 @@ namespace AppReciclagem.Infraestrutura
                     on new { IdPontoColeta = pontoColeta.Id, IdUsuario = idUsuario }
                     equals new { favorito.IdPontoColeta, favorito.IdUsuario } into favoritoGroup
                 from favorito in favoritoGroup.DefaultIfEmpty()
+
                 select new PontoColetaPesquisa(
                     pontoColeta.Id,
                     pontoColeta.Nome,
@@ -118,12 +120,35 @@ namespace AppReciclagem.Infraestrutura
                     pontoColeta.Latitude,
                     pontoColeta.Longitude);
 
-            return query.ToArray()
-                .Where(f => this.CalculateHaversine(
-                    latitude,
-                    longitude,
-                    f.Latitude,
-                    f.Longitude) <= range);
+            var pontosColeta = query.ToList();
+            var idsPontosColeta = pontosColeta.Select(f => f.IdPontoColeta);
+            
+            if (!string.IsNullOrWhiteSpace(tipoMaterial))
+            {
+                var materiais = context.MaterialColeta.Where(f => f.TipoMaterial == tipoMaterial && idsPontosColeta.Contains(f.IdPontoColeta));
+
+                foreach (var pontoColeta in pontosColeta)
+                {
+                    var material = materiais.FirstOrDefault(f => f.IdPontoColeta == pontoColeta.IdPontoColeta);
+                    
+                    if (material != null)
+                    {
+                        pontoColeta.TipoMaterial = material.TipoMaterial;
+                        pontoColeta.PrecoMaterial = material.Preco;
+                        pontoColeta.TipoMedida = material.Medida; 
+                    }
+                }
+
+                var idsPontosColetaRemover = idsPontosColeta.Except(materiais.Select(f => f.IdPontoColeta));
+
+                pontosColeta.RemoveAll(f => idsPontosColetaRemover.Contains(f.IdPontoColeta));
+            }
+
+            return pontosColeta.Where(f => this.CalculateHaversine(
+                latitude,
+                longitude,
+                f.Latitude,
+                f.Longitude) <= range);
         }
 
         private double CalculateHaversine(double lat1, double lon1, double lat2, double lon2)

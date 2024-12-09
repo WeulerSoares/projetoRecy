@@ -2,6 +2,7 @@ import axios from 'axios';
 import { PontoColeta } from "./models/pontoColeta";
 import PerfilPontoColeta from './models/perfilPontoColeta';
 import { PontoColetaPesquisa } from './models/pontoColetaPesquisa';
+import { PontoColetaParaFiltro } from './models/pontoColetaParaFiltro';
 
 const API_URL = 'https://localhost:7167/api/v1/pontocoleta';
 
@@ -26,8 +27,8 @@ export class PontoColetaService {
         return response.data && Object.keys(response.data).length > 0 ? response.data : null;
     }
 
-    static async getPontosColetaByRange(idUsuario: number, raio: number, latitude: number, longitude: number): Promise<PontoColetaPesquisa[]> {
-        const response = await axios.get<PontoColetaPesquisa[]>(`${API_URL}/usuario/${idUsuario}/range/${raio}/${latitude}/${longitude}`);
+    static async getPontosColeta(filtro: PontoColetaParaFiltro): Promise<PontoColetaPesquisa[]> {
+        const response = await axios.get<PontoColetaPesquisa[]>(`${API_URL}/paraFiltro`, { params: filtro});
         return response.data;
     }
 

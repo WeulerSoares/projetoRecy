@@ -61,3 +61,12 @@
 /backend/obj/Debug/net8.0/AppReciclagem.GeneratedMSBuildEditorConfig.editorconfig
 /backend/obj/Debug/net8.0/AppReciclagem.pdb
 /backend/obj/Debug/net8.0/AppReciclagem.sourcelink.json
+/backend/bin/Debug/net8.0/AppReciclagem.deps.json
+/backend/bin/Debug/net8.0/Newtonsoft.Json.Bson.dll
+/backend/bin/Debug/net8.0/Newtonsoft.Json.dll
+/backend/bin/Debug/net8.0/System.Net.Http.Formatting.dll
+/backend/bin/Debug/net8.0/System.Web.Http.dll
+/backend/obj/AppReciclagem.csproj.nuget.dgspec.json
+/backend/obj/Debug/net8.0/AppReciclagem.csproj.FileListAbsolute.txt
+/backend/obj/project.assets.json
+/backend/obj/project.nuget.cache

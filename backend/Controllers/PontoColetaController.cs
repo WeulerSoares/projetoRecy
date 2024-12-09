@@ -59,20 +59,17 @@ namespace AppReciclagem.Controllers
             }
         }
 
-        [HttpGet("usuario/{idUsuario}/range/{raio}/{latitude}/{longitude}")]
-        public IActionResult ObterPontosColetaNoRange(
-            int idUsuario,
-            double raio,
-            double latitude,
-            double longitude)
+        [HttpGet("paraFiltro")]
+        public IActionResult ObterPontosColeta([FromQuery] PontoColetaParaFiltroViewModel filtro)
         {
             try
             {
-                var pontosColeta = pontoColetaRepository.ObterPontosColetaNoRange(
-                    idUsuario,
-                    raio,
-                    latitude,
-                    longitude);
+                var pontosColeta = pontoColetaRepository.ObterPontosColeta(
+                    filtro.IdUsuario,
+                    filtro.Raio,
+                    filtro.Latitude,
+                    filtro.Longitude,
+                    filtro.TipoMaterial);
 
                 return Ok(pontosColeta);
             }

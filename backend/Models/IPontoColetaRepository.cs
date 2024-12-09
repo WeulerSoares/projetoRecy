@@ -13,11 +13,12 @@
             double latitude, 
             double longitude);
 
-        IEnumerable<PontoColetaPesquisa> ObterPontosColetaNoRange(
+        IEnumerable<PontoColetaPesquisa> ObterPontosColeta(
             int idUsuario,
             double range,
             double latitude,
-            double longitude);
+            double longitude,
+            string tipoMaterial);
 
         void Add(PontoColeta pontoColeta);
 

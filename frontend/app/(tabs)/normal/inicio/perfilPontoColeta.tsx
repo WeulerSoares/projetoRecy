@@ -15,6 +15,7 @@ import StarRating from "react-native-star-rating-widget";
 import { useUser } from "@/components/UserContext";
 import { UsuarioService } from "../../services/usuarioService";
 import PerfilPontoColetaModel from "../../services/models/perfilPontoColeta";
+import { TipoMaterial } from "../../services/enums/tipoMaterial";
 
 const PerfilPontoColeta = () => {
   const [pontoColeta, setPontoColeta] = useState<PerfilPontoColetaModel>();
@@ -136,7 +137,7 @@ const PerfilPontoColeta = () => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                   <View style={styles.materialItem}>
-                    <Text style={styles.materialText}>{item.tipoMaterial}</Text>
+                    <Text style={styles.materialText}>{TipoMaterial[item.tipoMaterial as keyof typeof TipoMaterial]}</Text>
                     <Text style={styles.materialText}>{obterPrecoFormatado(item.preco, item.medida)}</Text>
                   </View>
                 )}
