@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Platform, Text, ScrollView, TouchableOpacity, FlatList, Modal, TextInput, Image } from 'react-native';
+import { View, StyleSheet, Platform, Text, ScrollView, TouchableOpacity, Modal, TextInput, Image, ActivityIndicator } from 'react-native';
 import { getCurrentPositionAsync, LocationAccuracy, LocationObject, requestForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
 import { PontoColetaService } from '../../services/pontoColetaService';
@@ -18,6 +18,7 @@ const TabTwoScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [radio, setRadio] = useState('10');
   const [tipoMaterial, setTipoMaterial] = useState('');
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const user = useUser();
   
@@ -27,7 +28,9 @@ const TabTwoScreen = () => {
       favoritado: false,
       avaliacao: 5,
       endereco: 'Av. Juiz Marco Túlio Isaac, 50 - Jardim da Cidade, Betim - MG',
-      foto: 'https://lh5.googleusercontent.com/p/AF1QipOmo7q-buUeqFIDe3E8_XQXpcG4Ia6GRDU2iC30=w426-h240-k-no'
+      foto: 'https://lh5.googleusercontent.com/p/AF1QipOmo7q-buUeqFIDe3E8_XQXpcG4Ia6GRDU2iC30=w426-h240-k-no',
+      latitude: -19.964228172315295,
+      longitude: -44.198863303422904
     },
     {
       idPontoColeta: 2,
@@ -35,7 +38,9 @@ const TabTwoScreen = () => {
       favoritado: false,
       avaliacao: 5,
       endereco: 'R. Florianópolis, 107 - Niterói, Betim - MG',
-      foto: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=UTy0tFkSagSkZg1QAgusEw&cb_client=search.gws-prod.gps&w=408&h=240&yaw=14.468989&pitch=0&thumbfov=100'
+      foto: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=UTy0tFkSagSkZg1QAgusEw&cb_client=search.gws-prod.gps&w=408&h=240&yaw=14.468989&pitch=0&thumbfov=100',
+      latitude: -19.943492839627364, 
+      longitude: -44.1789260323707
     },
     {
       idPontoColeta: 3,
@@ -43,7 +48,9 @@ const TabTwoScreen = () => {
       favoritado: false,
       avaliacao: 4,
       endereco: 'R. do Rosário, 1081 - Angola, Betim - MG, 32630-000',
-      foto: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=fpvAmtInav5KZ9wFdysztQ&cb_client=search.gws-prod.gps&w=408&h=240&yaw=296.94507&pitch=0&thumbfov=100'
+      foto: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=fpvAmtInav5KZ9wFdysztQ&cb_client=search.gws-prod.gps&w=408&h=240&yaw=296.94507&pitch=0&thumbfov=100',
+      latitude: -19.95548480009213, 
+      longitude: -44.199511907175165
     },
     {
       idPontoColeta: 4,
@@ -51,7 +58,9 @@ const TabTwoScreen = () => {
       favoritado: false,
       avaliacao: 3,
       endereco: 'Av. Bandeirantes, 103 - Chácaras, Betim - MG',
-      foto: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=ul_w0iEj6GEsRO3eFbYbbg&cb_client=search.gws-prod.gps&w=408&h=240&yaw=330.12436&pitch=0&thumbfov=100'
+      foto: 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=ul_w0iEj6GEsRO3eFbYbbg&cb_client=search.gws-prod.gps&w=408&h=240&yaw=330.12436&pitch=0&thumbfov=100',
+      latitude: -19.964108664758548, 
+      longitude: -44.19192037413543
     },
     {
       idPontoColeta: 5,
@@ -59,7 +68,9 @@ const TabTwoScreen = () => {
       favoritado: false,
       avaliacao: 5,
       endereco: 'R. Antônio Soares de Melo, 61 - Betim Industrial, Betim - MG',
-      foto: 'https://lh5.googleusercontent.com/p/AF1QipMYUuCRVNqA_uWEUKY9vLHAI_fhclFhxwQYlbUZ=w408-h408-k-no'
+      foto: 'https://lh5.googleusercontent.com/p/AF1QipMYUuCRVNqA_uWEUKY9vLHAI_fhclFhxwQYlbUZ=w408-h408-k-no',
+      latitude: -19.96404747034492, 
+      longitude: -44.173913891029414
     }];
 
   async function requestLocationPermissions() {
@@ -110,6 +121,24 @@ const TabTwoScreen = () => {
     return `R$ ${preco}/${medida}`
   };
 
+  const handleCardClick = (latitude: number, longitude: number) => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true });
+    }
+
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: latitude,
+          longitude: longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        },
+        1000 
+      );
+    }
+  }
+
   useEffect(() => {
     requestLocationPermissions();
   }, []);
@@ -130,9 +159,6 @@ const TabTwoScreen = () => {
 
     getPontosDeColeta(location!);
   }, []);
-
-
-
 
   if (Platform.OS === 'web') {
     return (
@@ -252,41 +278,52 @@ const TabTwoScreen = () => {
     );
   }
 
+  if (!location) {
+    // Exibe um indicador de carregamento enquanto a localização é carregada
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.headerText}>Encontre o melhor ponto de coleta para você</Text>
+      <ScrollView ref={scrollViewRef} contentContainerStyle={styles.scrollContent}>
+      <Text style={styles.headerText}>Encontre o melhor ponto de coleta para você</Text>
         <View style={styles.filterContainer}>
-          <TouchableOpacity style={styles.filterButton} onPress={getPontosDeColeta(location!)}>
-            <Text style={styles.filterButtonText}>Material ▼</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.filterButton}>
-            <Text style={styles.filterButtonText}>Distância</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.filterButton}>
-            <Text style={styles.filterButtonText}>Favoritos</Text>
+          <TouchableOpacity
+            style={styles.filterButton}
+            onPress={() => {
+              setModalVisible(true)
+            }}>
+            <Text style={styles.filterButtonText}>Filtros</Text>
           </TouchableOpacity>
         </View>
-        {location && (
-          <MapView
-            ref={mapRef}
-            style={styles.map}
-            initialRegion={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
-            }}
-
-          >
+        
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          initialRegion={{
+            latitude: location!.coords.latitude,
+            longitude: location!.coords.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          }}
+          
+        >
+          {dados.map((pontoColeta) => (
             <Marker
+              key={pontoColeta.idPontoColeta}
               coordinate={{
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
+                latitude: pontoColeta.latitude,
+                longitude: pontoColeta.longitude,
               }}
+              title={pontoColeta.nomePontoColeta}
             />
-          </MapView>
-        )}
+          ))}
+        </MapView>
+
         {dados.map((pontoColeta) => (
           <View style={styles.cardContent} key={pontoColeta.idPontoColeta}>
             <View style={styles.placeholderImage}>
@@ -297,10 +334,6 @@ const TabTwoScreen = () => {
             <View style={styles.cardText}>
               <Text style={styles.cardTitle}>{pontoColeta.nomePontoColeta}</Text>
               <Text style={styles.cardDetails}>Endereço: {pontoColeta.endereco}</Text>
-              {/* {material &&
-                <Text style={styles.cardDetails}>Material: {material}</Text> &&
-                <Text style={styles.cardDetails}>Preço: {material}</Text>
-              } */}
               <View style={styles.rating}>
                 <StarRating
                     rating={pontoColeta.avaliacao || 0}
@@ -311,9 +344,14 @@ const TabTwoScreen = () => {
                 />
                 <Text style={styles.ratingText}>{pontoColeta.avaliacao ? pontoColeta.avaliacao.toFixed(1) : 0}</Text>
               </View>
-              <TouchableOpacity style={styles.moreInfoButton}>
-                <Link href={{ pathname: '/normal/inicio/perfilPontoColeta', params: { id: pontoColeta.idPontoColeta }}} style={styles.moreInfoText}>Mais informações</Link>
-              </TouchableOpacity>
+              <View style={styles.webFallback}>
+                <TouchableOpacity style={styles.moreInfoButton}>
+                  <Link href={{ pathname: '/normal/inicio/perfilPontoColeta', params: { id: pontoColeta.idPontoColeta }}} style={styles.moreInfoText}>Mais informações</Link>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button2} onPress={() => handleCardClick(pontoColeta.latitude, pontoColeta.longitude)}>
+                  <Text style={styles.buttonText2}>MAPA</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         ))}
@@ -365,6 +403,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingBottom: 80,
     marginBottom: 80,
+    height: 250
   },
   webFallback: {
     flex: 1,
@@ -563,7 +602,24 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     color: "#333",
     fontSize: 20,
-},
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button2: {
+    marginTop: 5,
+    backgroundColor: "#559555",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    alignSelf: "flex-start",
+  },
+  buttonText2: {
+    color: "white",
+    fontSize: 18,
+  },
 });
 
 export default TabTwoScreen;
