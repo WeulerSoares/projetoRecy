@@ -166,7 +166,7 @@ export default function RegistrarColeta() {
 
                 if (response) {
                     setShowAlert(true);
-                    setAlertMessage('Você recebeu 50 pontos, parabens!');
+                    setAlertMessage('Reciclador recebeu 50 pontos, dê os parabéns!');
                 }
             }
 
@@ -206,13 +206,13 @@ export default function RegistrarColeta() {
 
             {
                 usuario && cpf &&
-                <Text style={styles.helperText}>Cliente: {usuario.nome}</Text>
+                <Text style={styles.helperText}>Reciclador: {usuario.nome}</Text>
 
             }
 
             {
                 !usuario && cpf &&
-                <Text style={styles.helperText}>Usuario não encontrado na base de dados</Text>
+                <Text style={styles.helperText}>Usuário não encontrado na base de dados</Text>
             }
 
             {
@@ -264,7 +264,7 @@ export default function RegistrarColeta() {
                         <FontAwesome5 name="weight" size={18} color="#558C40" style={styles.icon} />
                         <TextInput
                             style={styles.input}
-                            placeholder={`${measureTypes[measureType as keyof typeof measureTypes] || 'Informe o valor'}`}
+                            placeholder={`${measureTypes[measureType as keyof typeof measureTypes] || 'Informe o valor da medida'}`}
                             placeholderTextColor="#558C40"
                             keyboardType="numeric"
                             value={quantidade.replace(/[^\d,.-]/g, '').replace(',', '.') || ''}

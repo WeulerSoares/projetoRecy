@@ -219,7 +219,7 @@ export default function App() {
           labelColor="#366923"
         />
         <CustomRadioButton
-          label="Coletor"
+          label="Reciclador"
           selected={tipoUsuario === TipoUsuario.Coletor}
           onPress={() => setTipoUsuario(TipoUsuario.Coletor)}
           selectedColor="#559555"

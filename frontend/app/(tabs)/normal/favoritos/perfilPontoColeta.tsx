@@ -120,9 +120,6 @@ const PerfilPontoColeta = () => {
         </View>
         <View style={styles.card}>
           <View style={styles.cabecalhoCard}>
-            <TouchableOpacity style={styles.botaoVerFotos}>
-              <Text style={styles.botaoTexto}>Ver Fotos</Text>
-            </TouchableOpacity>
             <TouchableOpacity onPress={() => toggleFavorito(!pontoColeta?.favoritado)}>
               <MaterialCommunityIcons
                 name={pontoColeta?.favoritado ? "heart" : "heart-outline"}
@@ -202,7 +199,7 @@ const styles = StyleSheet.create({
   },
   cabecalhoCard: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,
   },

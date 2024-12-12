@@ -16,9 +16,9 @@ export default function TabLayoutAdmin() {
         <Tabs.Screen
           name="index"
           options={{
-            tabBarLabel: '', // Esconde o texto da aba
+            tabBarLabel: '',
             tabBarIcon: ({ color, focused }) => (
-              <MaterialCommunityIcons name={focused ? 'account' : 'account-outline'} size={24} color={color} />
+              <TabBarIcon name={focused ? 'person' : 'person-outline'} color={color} />
             ),
           }}
         />

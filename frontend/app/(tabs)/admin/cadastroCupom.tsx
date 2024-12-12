@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
@@ -8,6 +8,7 @@ import { Picker } from '@react-native-picker/picker';
 import { Cupom } from '../services/models/cupom';
 import { CupomService } from '../services/cupomService';
 import Alert from '@/components/Alert';
+import { useFocusEffect } from 'expo-router';
 
 export default function CadastroCupom() {
   const [empresas, setEmpresas] = useState<EmpresaParceira[]>([]);
@@ -26,19 +27,20 @@ export default function CadastroCupom() {
     return valor.replace(/\D/g, '');
   };
 
-  useEffect(() => {
-    // Buscar empresas ao carregar o componente
-    const carregarEmpresas = async () => {
-      try {
-        const dados = await EmpresaParceiraService.obterEmpresas();
-        setEmpresas(dados);
-      } catch (error) {
-        console.error("Erro ao carregar empresas:", error);
-      }
-    };
-    
-    carregarEmpresas();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const carregarEmpresas = async () => {
+        try {
+          const dados = await EmpresaParceiraService.obterEmpresas();
+          setEmpresas(dados);
+        } catch (error) {
+          console.error("Erro ao carregar empresas:", error);
+        }
+      };
+
+      carregarEmpresas();
+    }, [])
+  );
 
   const cadastrarCupom = async () => {
     if (!empresaSelecionada || !pontos || !valor || !quantidade) {

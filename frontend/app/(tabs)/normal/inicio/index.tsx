@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Platform, Text, ScrollView, TouchableOpacity, Modal, TextInput, Image, ActivityIndicator } from 'react-native';
 import { getCurrentPositionAsync, LocationAccuracy, LocationObject, requestForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
 import { PontoColetaService } from '../../services/pontoColetaService';
 import { Picker } from '@react-native-picker/picker';
-import { Link } from 'expo-router';
+import { Link, useFocusEffect } from 'expo-router';
 import { useUser } from '@/components/UserContext';
 import { PontoColetaPesquisa } from '../../services/models/pontoColetaPesquisa';
 import StarRating from 'react-native-star-rating-widget';
@@ -139,10 +139,12 @@ const TabTwoScreen = () => {
     }
   }
 
-  useEffect(() => {
-    requestLocationPermissions();
-  }, []);
-
+  useFocusEffect(
+    useCallback(() => {
+      requestLocationPermissions();
+    }, [])
+  );
+  
   useEffect(() => {
     if (Platform.OS !== 'web') {
       watchPositionAsync(
@@ -258,7 +260,6 @@ const TabTwoScreen = () => {
                     setTipoMaterial(''),
                     setRadio('10'),
                     getPontosDeColeta(location!)
-                    setModalVisible(false);
                 }}>
                 <Text style={styles.buttonText}>Limpar Filtro</Text>
               </TouchableOpacity>

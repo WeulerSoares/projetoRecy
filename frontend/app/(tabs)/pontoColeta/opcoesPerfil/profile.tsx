@@ -95,8 +95,6 @@ export default function UpdateAddressScreen() {
     } else {
       setTitulo("Cadastrar endereço");
     }
-
-
   }
 
 
@@ -210,7 +208,7 @@ export default function UpdateAddressScreen() {
 
       if (response) {
         setShowAlert(true);
-        setAlertMessage('Endereço Ponto Coleta cadastrado com sucesso!');
+        setAlertMessage('Endereço ponto de coleta cadastrado com sucesso!');
         setLatitude('');
         setLatitude('');
         requestLocationPermissions();
@@ -256,7 +254,7 @@ export default function UpdateAddressScreen() {
 
       if (response) {
         setShowAlert(true);
-        setAlertMessage('Endereço Ponto Coleta atualizado com sucesso!');
+        setAlertMessage('Endereço ponto de coleta atualizado com sucesso!');
         setLatitude('');
         setLatitude('');
         requestLocationPermissions();
